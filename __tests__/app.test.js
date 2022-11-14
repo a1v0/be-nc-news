@@ -35,7 +35,6 @@ describe("/api/topics", () => {
                 });
             });
     });
-    test.todo("GET - 404: returns with error when no topics are found");
 });
 
 describe("/api/articles", () => {
@@ -73,13 +72,11 @@ describe("/api/articles", () => {
             .get("/api/articles")
             .expect(200)
             .then(({ body: { articles } }) => {
-                console.log(articles);
                 expect(articles[0].comment_count).toBe(2);
                 expect(articles[1].comment_count).toBe(1);
                 expect(articles[2].comment_count).toBe(2);
             });
     });
-    test.todo("GET - 404: returns with error when no articles are found");
 });
 
 describe("misc error handling", () => {
