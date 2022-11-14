@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
+const { getTopics } = require("./controllers/topics.controller.js");
 
-app.get("/api/topics");
+app.get("/api/topics", getTopics);
 
 app.all("/*", (req, res, next) => {
     next({ status: 404, msg: "not found" });
