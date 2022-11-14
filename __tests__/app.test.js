@@ -53,7 +53,7 @@ describe("/api/articles", () => {
                         topic: expect.any(String),
                         created_at: expect.any(Number),
                         votes: expect.any(Number),
-                        comment_count: expect.any(String)
+                        comment_count: expect.any(Number)
                     });
                 });
             });
@@ -68,7 +68,17 @@ describe("/api/articles", () => {
                 });
             });
     });
-    test.todo("GET - 200: results contain correct comment_count value");
+    test("GET - 200: results contain correct comment_count value", () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+                console.log(articles);
+                expect(articles[0].comment_count).toBe(2);
+                expect(articles[1].comment_count).toBe(1);
+                expect(articles[2].comment_count).toBe(2);
+            });
+    });
     test.todo("GET - 404: returns with error when no articles are found");
 });
 

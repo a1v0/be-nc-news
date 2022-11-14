@@ -30,6 +30,7 @@ exports.selectArticles = () => {
             return response.rows.map((row) => {
                 const rowCopy = { ...row };
                 rowCopy.created_at = Date.parse(rowCopy.created_at);
+                rowCopy.comment_count = Number(rowCopy.comment_count);
                 return rowCopy;
             });
         });
