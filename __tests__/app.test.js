@@ -35,7 +35,15 @@ describe("/api/topics", () => {
                 });
             });
     });
-    test.todo("GET - 404: no topics found");
+    test.todo("GET - 404: returns with error when no topics are found");
+});
+
+describe("/api/articles", () => {
+    test.todo(
+        "GET - 200: return array of articles with following properties: author which is the username, title, article_id, topic, created_at, votes, comment_count"
+    );
+    test.todo("GET - 200: results should be sorted in descending date order");
+    test.todo("GET - 404: returns with error when no articles are found");
 });
 
 describe("misc error handling", () => {
