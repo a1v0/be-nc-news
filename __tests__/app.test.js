@@ -79,6 +79,14 @@ describe("/api/articles", () => {
     });
 });
 
+describe("/api/articles/:article_id", () => {
+    test.todo(
+        "GET - 200: returns a single article object with the following properties: author, title, article_id, body, topic, created_at, votes"
+    );
+    test.todo("GET - 400: returns error when article id is invalid");
+    test.todo("GET - 404: returns error when no article is found");
+});
+
 describe("misc error handling", () => {
     test("ANY REQUEST - 404: respond with 404 error when path not found", () => {
         return request(app)
