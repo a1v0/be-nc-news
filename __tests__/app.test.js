@@ -43,7 +43,7 @@ describe("/api/articles", () => {
             .get("/api/articles")
             .expect(200)
             .then(({ body: { articles } }) => {
-                expect(articles.length).toBeGreaterThan(0);
+                expect(articles.length).toBe(12);
                 articles.forEach((article) => {
                     expect(article).toEqual({
                         author: expect.any(String),
@@ -74,7 +74,7 @@ describe("/api/articles", () => {
             .then(({ body: { articles } }) => {
                 expect(articles[0].comment_count).toBe(2);
                 expect(articles[1].comment_count).toBe(1);
-                expect(articles[2].comment_count).toBe(2);
+                expect(articles[2].comment_count).toBe(0);
             });
     });
 });
