@@ -19,17 +19,11 @@ afterAll(() => {
 });
 
 describe("/api/topics", () => {
-    test.todo("");
-    test.todo("");
-    test.todo("");
-    test.todo("");
-    test.todo("");
-    test.todo("");
-    test.todo("");
-    test.todo("");
-    test.todo("");
-    test.todo("");
-    test.todo("");
-    test.todo("");
-    test.todo("");
+    test.todo(
+        "GET - 200: respond with array of topic objects, each having only 'slug' and 'description' properties"
+    );
+});
+
+describe("misc error handling", () => {
+    test.todo("ERROR - 404: respond with 404 error when path not found");
 });
