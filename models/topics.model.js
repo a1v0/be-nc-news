@@ -22,10 +22,15 @@ exports.selectArticles = () => {
             FROM articles
             INNER JOIN comments
                 ON articles.article_id = comments.article_id
-            GROUP BY articles.author, articles.title, articles.created_at, topic, articles.article_id;
+            GROUP BY articles.author, articles.title, articles.created_at, topic, articles.article_id
+            ORDER BY created_at DESC;
             ;`
         )
         .then((response) => {
-            return response.rows;
+            return response.rows.map((row) => {
+                const rowCopy = { ...row };
+                rowCopy.created_at = Date.parse(rowCopy.created_at);
+                return rowCopy;
+            });
         });
 };

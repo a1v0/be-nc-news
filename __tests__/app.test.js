@@ -51,14 +51,23 @@ describe("/api/articles", () => {
                         title: expect.any(String),
                         article_id: expect.any(Number),
                         topic: expect.any(String),
-                        created_at: expect.any(String),
+                        created_at: expect.any(Number),
                         votes: expect.any(Number),
                         comment_count: expect.any(String)
                     });
                 });
             });
     });
-    test.todo("GET - 200: results should be sorted in descending date order");
+    test("GET - 200: results should be sorted in descending date order", () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+                expect(articles).toBeSortedBy("created_at", {
+                    descending: true
+                });
+            });
+    });
     test.todo("GET - 200: results contain correct comment_count value");
     test.todo("GET - 404: returns with error when no articles are found");
 });
