@@ -17,13 +17,19 @@ exports.selectArticles = () => {
                 topic,
                 articles.created_at,
                 articles.votes,
-                CAST (COUNT(comments.article_id) AS INT) AS comment_count
+                CAST (COUNT(comments.article_id) AS INT)
+                    AS comment_count
             FROM articles
-            INNER JOIN comments
-                ON articles.article_id = comments.article_id
-            GROUP BY articles.author, articles.title, articles.created_at, topic, articles.article_id
+            LEFT OUTER JOIN comments
+            ON articles.article_id = comments.article_id
+            GROUP BY
+                articles.author,
+                articles.title,
+                articles.created_at,
+                topic,
+                articles.article_id
             ORDER BY created_at DESC;
-            ;`
+            `
         )
         .then((response) => {
             console.log(response.rows);
