@@ -39,10 +39,27 @@ describe("/api/topics", () => {
 });
 
 describe("/api/articles", () => {
-    test.todo(
-        "GET - 200: return array of articles with following properties: author which is the username, title, article_id, topic, created_at, votes, comment_count"
-    );
+    test("GET - 200: return array of articles with following properties: author, title, article_id, topic, created_at, votes, comment_count", () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+                expect(articles.length).toBeGreaterThan(0);
+                articles.forEach((article) => {
+                    expect(article).toEqual({
+                        author: expect.any(String),
+                        title: expect.any(String),
+                        article_id: expect.any(Number),
+                        topic: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_count: expect.any(String)
+                    });
+                });
+            });
+    });
     test.todo("GET - 200: results should be sorted in descending date order");
+    test.todo("GET - 200: results contain correct comment_count value");
     test.todo("GET - 404: returns with error when no articles are found");
 });
 
