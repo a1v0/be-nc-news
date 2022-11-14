@@ -54,4 +54,10 @@ git branch -D <local branch>
 
 To ensure we are not commiting broken code this project makes use of git hooks. Git hooks are scripts triggered during certain events in the git lifecycle. Husky is a popular package which allows us to set up and maintain these scripts. This project makes use a _pre-commit hook_. When we attempt to commit our work, the script defined in the `pre-commit` file will run. If any of our tests fail than the commit will be aborted.
 
-The [Husky documentation](https://typicode.github.io/husky/#/) explains how to configure Husky for your own project as well as creating your own custom hooks.\_
+The [Husky documentation](https://typicode.github.io/husky/#/) explains how to configure Husky for your own project as well as creating your own custom hooks.
+
+## Connecting to two local databases
+
+To create an automatic link between our project and the relevant database (`nc_news` or `nc_news_test`), we need to create two environment variable files in our root directory: `.env.development` and `.env.test`. The connection file (`./db/connection.js`) will retrieve the contents from these environment files to set the database being used when the repo is run.
+
+Look at the `.env-example` file for guidance on what the file contents should look like.
