@@ -35,7 +35,6 @@ describe("/api/topics", () => {
                 });
             });
     });
-    test.todo("GET - 404: no topics found");
 });
 
 describe("misc error handling", () => {
