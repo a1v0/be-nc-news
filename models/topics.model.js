@@ -32,7 +32,6 @@ exports.selectArticles = () => {
             `
         )
         .then((response) => {
-            console.log(response.rows);
             return response.rows.map((row) => {
                 const rowCopy = { ...row };
                 rowCopy.created_at = Date.parse(rowCopy.created_at);
@@ -51,6 +50,13 @@ exports.selectArticleById = (id) => {
             [id]
         )
         .then((response) => {
-            return response.rows[0];
+            if (!response.rows.length) {
+                return Promise.reject({
+                    status: 404,
+                    msg: "article not found"
+                });
+            } else {
+                return response.rows[0];
+            }
         });
 };

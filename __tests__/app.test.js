@@ -96,20 +96,20 @@ describe("/api/articles/:article_id", () => {
                 });
             });
     });
-    test("GET - 400: returns error when article id is invalid", () => {
+    test("GET - 404: returns error when no article is found", () => {
+        return request(app)
+            .get("/api/articles/9999999")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("article not found");
+            });
+    });
+    test.skip("GET - 400: returns error when article id is invalid", () => {
         return request(app)
             .get("/api/articles/obi-wan-kenobi")
             .expect(400)
             .then(({ body: { msg } }) => {
                 expect(msg).toBe("invalid article id");
-            });
-    });
-    test("GET - 404: returns error when no article is found", () => {
-        return request(app)
-            .get("/api/articles/9999999999999999999999999999999")
-            .expect(404)
-            .then(({ body: { msg } }) => {
-                expect(msg).toBe("article not found");
             });
     });
 });

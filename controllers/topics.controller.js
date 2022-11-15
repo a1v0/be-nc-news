@@ -11,13 +11,15 @@ exports.getTopics = (req, res) => {
 };
 
 exports.getArticles = (req, res) => {
-    selectArticles().then((articles) => {
+    return selectArticles().then((articles) => {
         res.status(200).send({ articles });
     });
 };
 
-exports.getArticleById = (req, res) => {
-    selectArticleById(req.params.article_id).then((article) => {
-        res.status(200).send({ article });
-    });
+exports.getArticleById = (req, res, next) => {
+    return selectArticleById(req.params.article_id)
+        .then((article) => {
+            res.status(200).send({ article });
+        })
+        .catch(next);
 };
