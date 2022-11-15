@@ -144,7 +144,7 @@ describe("/api/articles/:article_id/comments", () => {
                 });
             });
     });
-    test.skip("GET - 200: response array ordered by created_at, with most recent comment first", () => {
+    test("GET - 200: response array ordered by created_at, with most recent comment first", () => {
         return request(app)
             .get("/api/articles/1/comments")
             .expect(200)

@@ -64,11 +64,13 @@ exports.selectCommentsByArticleId = (id) => {
         .query(
             `
                 SELECT * FROM comments
-                WHERE article_id = $1;
+                WHERE article_id = $1
+                ORDER BY created_at DESC;
             `,
             [id]
         )
         .then((response) => {
+            console.log(response.rows);
             return parseDateFieldWithMap(response.rows);
         });
 };
