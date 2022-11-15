@@ -235,9 +235,9 @@ describe("/api/articles/:article_id/comments", () => {
                 expect(msg).toBe("invalid article id");
             });
     });
-    test.skip("POST - 404: error when article does not exist", () => {
+    test("POST - 404: error when article does not exist", () => {
         return request(app)
-            .post("/api/articles/999999999999/comments")
+            .post("/api/articles/999999999/comments")
             .send({
                 username: "icellusedkars",
                 body: "i am altering the deal. pray i do not alter it any further"
