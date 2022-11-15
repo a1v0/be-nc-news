@@ -211,7 +211,7 @@ describe("/api/articles/:article_id/comments", () => {
                 });
             });
     });
-    test.skip("POST - 400: error when passed object is missing one of the necessary keys", () => {
+    test("POST - 400: error when passed object is missing one of the necessary keys", () => {
         return request(app)
             .post("/api/articles/6/comments")
             .send({

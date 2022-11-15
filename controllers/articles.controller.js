@@ -36,9 +36,13 @@ exports.getCommentsByArticleId = (req, res, next) => {
 };
 
 exports.postCommentByArticleId = (req, res, next) => {
-    insertCommentByArticleId(req.params.article_id, req.body).then(
-        (comment) => {
+    insertCommentByArticleId(req.params.article_id, req.body)
+        .then((comment) => {
             res.status(201).send({ comment });
-        }
-    );
+        })
+        .catch((err) => {
+            if (!req.body.body || req.body.username) {
+                next({ status: 400, msg: "POST request body is incomplete" });
+            }
+        });
 };

@@ -68,7 +68,7 @@ exports.selectCommentsByArticleId = (id) => {
         });
 };
 
-exports.insertCommentByArticleId = (id, body) => {
+exports.insertCommentByArticleId = (id, { body, username }) => {
     return db
         .query(
             `
@@ -84,7 +84,7 @@ exports.insertCommentByArticleId = (id, body) => {
                 0
             ) RETURNING * ;
         `,
-            [id, body.body, body.username]
+            [id, body, username]
         )
         .then((response) => {
             return response.rows[0];
