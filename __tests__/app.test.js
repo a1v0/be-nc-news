@@ -126,7 +126,7 @@ describe("misc error handling", () => {
 });
 
 describe("/api/articles/:article_id/comments", () => {
-    test.skip("GET - 200: responds with array of comments for any given article_id, with these properties: comment_id, votes, created_at, author, body", () => {
+    test("GET - 200: responds with array of comments for any given article_id, with these properties: comment_id, votes, created_at, author, body", () => {
         return request(app)
             .get("/api/articles/1/comments")
             .expect(200)
@@ -138,7 +138,8 @@ describe("/api/articles/:article_id/comments", () => {
                         votes: expect.any(Number),
                         created_at: expect.any(Number),
                         author: expect.any(String),
-                        body: expect.any(String)
+                        body: expect.any(String),
+                        article_id: 1
                     });
                 });
             });
