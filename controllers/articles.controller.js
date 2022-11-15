@@ -3,7 +3,6 @@ const {
     selectArticleById,
     selectCommentsByArticleId
 } = require("../models/articles.model.js");
-const { psqlErrorHandler } = require("../errors/error-handler.js");
 
 exports.getArticles = (req, res) => {
     return selectArticles().then((articles) => {
@@ -17,11 +16,7 @@ exports.getArticleById = (req, res, next) => {
             res.status(200).send({ article });
         })
         .catch((err) => {
-            if (err.code) {
-                psqlErrorHandler(err, next);
-            } else {
-                next(err);
-            }
+            next(err);
         });
 };
 
@@ -35,10 +30,6 @@ exports.getCommentsByArticleId = (req, res, next) => {
             res.status(200).send({ comments });
         })
         .catch((err) => {
-            if (err.code) {
-                psqlErrorHandler(err, next);
-            } else {
-                next(err);
-            }
+            next(err);
         });
 };

@@ -9,7 +9,8 @@ const {
 const { getTopics } = require("./controllers/topics.controller.js");
 const {
     customErrorHandler,
-    lastResort500Error
+    lastResort500Error,
+    psqlErrorHandler
 } = require("./errors/error-handler.js");
 
 app.get("/api/topics", getTopics);
@@ -25,6 +26,7 @@ app.all("/*", (req, res, next) => {
 });
 
 // Error handling
+app.use(psqlErrorHandler);
 app.use(customErrorHandler);
 app.use(lastResort500Error);
 
