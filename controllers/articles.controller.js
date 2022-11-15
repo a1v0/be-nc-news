@@ -41,7 +41,7 @@ exports.postCommentByArticleId = (req, res, next) => {
             res.status(201).send({ comment });
         })
         .catch((err) => {
-            if (!req.body.body || req.body.username) {
+            if (!req.body.body || !req.body.username) {
                 next({ status: 400, msg: "POST request body is incomplete" });
             }
         });
