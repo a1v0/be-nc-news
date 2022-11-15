@@ -1,6 +1,8 @@
 exports.psqlErrorHandler = (err, next) => {
     if (err.code === "22P02") {
         next({ status: 400, msg: "invalid article id" });
+    } else {
+        next(err);
     }
 };
 
@@ -11,6 +13,6 @@ exports.customErrorHandler = (err, req, res, next) => {
 };
 
 exports.lastResort500Error = (err, req, res, next) => {
-    console.log("An unhandled error has occurred:", err);
+    console.log("An unhandled error has occurred:\n", err);
     res.status(500).send({ msg: "internal server error" });
 };

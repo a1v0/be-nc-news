@@ -3,6 +3,7 @@ const {
     selectArticleById,
     selectCommentsByArticleId
 } = require("../models/articles.model.js");
+const { psqlErrorHandler } = require("../errors/error-handler.js");
 
 exports.getArticles = (req, res) => {
     return selectArticles().then((articles) => {
@@ -15,7 +16,13 @@ exports.getArticleById = (req, res, next) => {
         .then((article) => {
             res.status(200).send({ article });
         })
-        .catch(next);
+        .catch((err) => {
+            if (err.code) {
+                psqlErrorHandler(err, next);
+            } else {
+                next(err);
+            }
+        });
 };
 
 exports.getCommentsByArticleId = (req, res, next) => {
@@ -27,5 +34,11 @@ exports.getCommentsByArticleId = (req, res, next) => {
         .then((comments) => {
             res.status(200).send({ comments });
         })
-        .catch(next);
+        .catch((err) => {
+            if (err.code) {
+                psqlErrorHandler(err, next);
+            } else {
+                next(err);
+            }
+        });
 };

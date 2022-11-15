@@ -114,17 +114,6 @@ describe("/api/articles/:article_id", () => {
     });
 });
 
-describe("misc error handling", () => {
-    test("ANY REQUEST - 404: respond with 404 error when path not found", () => {
-        return request(app)
-            .get("/api/not-a-valid-path")
-            .expect(404)
-            .then(({ body: { msg } }) => {
-                expect(msg).toBe("not found");
-            });
-    });
-});
-
 describe("/api/articles/:article_id/comments", () => {
     test("GET - 200: responds with array of comments for any given article_id, with these properties: comment_id, votes, created_at, author, body", () => {
         return request(app)
@@ -176,6 +165,17 @@ describe("/api/articles/:article_id/comments", () => {
             .expect(404)
             .then(({ body: { msg } }) => {
                 expect(msg).toBe("article not found");
+            });
+    });
+});
+
+describe("misc error handling", () => {
+    test("ANY REQUEST - 404: respond with 404 error when path not found", () => {
+        return request(app)
+            .get("/api/not-a-valid-path")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("not found");
             });
     });
 });

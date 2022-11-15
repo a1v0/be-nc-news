@@ -1,5 +1,5 @@
 const db = require("../db/connection.js");
-const { psqlErrorHandler } = require("../errors/error-handler.js");
+
 const { parseDateFieldWithMap } = require("../utils/utils.js");
 
 exports.selectArticles = () => {
@@ -50,12 +50,6 @@ exports.selectArticleById = (id, next) => {
             } else {
                 return response.rows[0];
             }
-        })
-        .catch((err) => {
-            if (err.code) {
-                return psqlErrorHandler(err, next);
-            }
-            return Promise.reject(err);
         });
 };
 
