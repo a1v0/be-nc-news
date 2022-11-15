@@ -7,6 +7,10 @@ const {
     getCommentsByArticleId
 } = require("./controllers/articles.controller.js");
 const { getTopics } = require("./controllers/topics.controller.js");
+const {
+    customErrorHandler,
+    lastResort500Error
+} = require("./errors/error-handler.js");
 
 app.get("/api/topics", getTopics);
 
@@ -20,8 +24,8 @@ app.all("/*", (req, res, next) => {
     next({ status: 404, msg: "not found" });
 });
 
-app.use((err, req, res, next) => {
-    res.status(err.status).send({ msg: err.msg });
-});
+// Error handling
+app.use(customErrorHandler);
+app.use(lastResort500Error);
 
 module.exports = app;
