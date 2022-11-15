@@ -223,7 +223,7 @@ describe("/api/articles/:article_id/comments", () => {
                 expect(msg).toBe("POST request body is incomplete");
             });
     });
-    test.skip("POST - 400: error when given invalid article_id", () => {
+    test("POST - 400: error when given invalid article_id", () => {
         return request(app)
             .post("/api/articles/blame-it-on-the-boogie/comments")
             .send({
