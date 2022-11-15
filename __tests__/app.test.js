@@ -170,9 +170,9 @@ describe("/api/articles/:article_id/comments", () => {
                 expect(msg).toBe("invalid article id");
             });
     });
-    test.skip("GET - 404: returns error when no article found with given id", () => {
+    test("GET - 404: returns error when no article found with given id", () => {
         return request(app)
-            .get(".api/articles/9999999999/comments")
+            .get("/api/articles/99999/comments")
             .expect(404)
             .then(({ body: { msg } }) => {
                 expect(msg).toBe("article not found");
