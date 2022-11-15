@@ -115,6 +115,7 @@ describe("/api/articles/:article_id", () => {
 });
 
 describe("/api/articles/:article_id/comments", () => {
+    // GET requests
     test("GET - 200: responds with array of comments for any given article_id, with these properties: comment_id, votes, created_at, author, body", () => {
         return request(app)
             .get("/api/articles/1/comments")
@@ -168,7 +169,8 @@ describe("/api/articles/:article_id/comments", () => {
             });
     });
 
-    test.skip("POST - 201: responds with posted comment (including comment_id and article_id) when comment comprises username and body only", () => {
+    // POST requests
+    test("POST - 201: responds with posted comment (including comment_id and article_id) when comment comprises username and body only", () => {
         return request(app)
             .post("/api/articles/1/comments")
             .send({

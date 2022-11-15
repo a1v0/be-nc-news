@@ -4,7 +4,8 @@ const app = express();
 const {
     getArticles,
     getArticleById,
-    getCommentsByArticleId
+    getCommentsByArticleId,
+    postCommentByArticleId
 } = require("./controllers/articles.controller.js");
 const { getTopics } = require("./controllers/topics.controller.js");
 const {
@@ -13,6 +14,8 @@ const {
     psqlErrorHandler
 } = require("./errors/error-handler.js");
 
+app.use(express.json());
+
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles", getArticles);
@@ -20,6 +23,7 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
 app.all("/*", (req, res, next) => {
     next({ status: 404, msg: "not found" });
