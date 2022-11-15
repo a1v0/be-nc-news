@@ -189,7 +189,7 @@ describe("/api/articles/:article_id/comments", () => {
                 });
             });
     });
-    test.skip("POST - 201: responds with posted comment, ignoring any superfluous properties in the passed object", () => {
+    test("POST - 201: responds with posted comment, ignoring any superfluous properties in the passed object", () => {
         return request(app)
             .post("/api/articles/6/comments")
             .send({
