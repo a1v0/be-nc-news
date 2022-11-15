@@ -70,7 +70,6 @@ exports.selectCommentsByArticleId = (id) => {
             [id]
         )
         .then((response) => {
-            console.log(response.rows);
             return parseDateFieldWithMap(response.rows);
         });
 };

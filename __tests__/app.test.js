@@ -154,7 +154,7 @@ describe("/api/articles/:article_id/comments", () => {
                 });
             });
     });
-    test.skip("GET - 200: returns empty array when no comments found on valid article_id", () => {
+    test("GET - 200: returns empty array when no comments found on valid article_id", () => {
         return request(app)
             .get("/api/articles/4/comments")
             .expect(200)
@@ -162,7 +162,7 @@ describe("/api/articles/:article_id/comments", () => {
                 expect(comments).toEqual([]);
             });
     });
-    test.skip("GET - 400: returns error when invalid article_id given", () => {
+    test("GET - 400: returns error when invalid article_id given", () => {
         return request(app)
             .get("/api/articles/hello_from_the_other_side/comments")
             .expect(400)

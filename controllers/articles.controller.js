@@ -15,13 +15,17 @@ exports.getArticleById = (req, res, next) => {
         .then((article) => {
             res.status(200).send({ article });
         })
-        .catch((err) => {
-            next(err);
-        });
+        .catch(next);
 };
 
 exports.getCommentsByArticleId = (req, res, next) => {
-    selectCommentsByArticleId(req.params.article_id).then((comments) => {
-        res.status(200).send({ comments });
-    });
+    const article_id = req.params.article_id;
+    return selectArticleById(article_id, next)
+        .then(() => {
+            return selectCommentsByArticleId(article_id);
+        })
+        .then((comments) => {
+            res.status(200).send({ comments });
+        })
+        .catch(next);
 };
