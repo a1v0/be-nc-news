@@ -1,4 +1,5 @@
 const db = require("../db/connection.js");
+const { psqlErrorHandler } = require("../errors/psql.error.js");
 
 exports.selectArticles = () => {
     return db
@@ -34,7 +35,7 @@ exports.selectArticles = () => {
         });
 };
 
-exports.selectArticleById = (id) => {
+exports.selectArticleById = (id, next) => {
     return db
         .query(
             `
@@ -49,9 +50,14 @@ exports.selectArticleById = (id) => {
                     status: 404,
                     msg: "article not found"
                 });
-                // SQL errors resulting from invalid article_id inputs are handled in the controller
             } else {
                 return response.rows[0];
             }
+        })
+        .catch((err) => {
+            if (err.code) {
+                return psqlErrorHandler(err, next);
+            }
+            return Promise.reject(err);
         });
 };

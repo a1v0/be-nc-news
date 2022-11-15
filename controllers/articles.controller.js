@@ -10,15 +10,11 @@ exports.getArticles = (req, res) => {
 };
 
 exports.getArticleById = (req, res, next) => {
-    return selectArticleById(req.params.article_id)
+    return selectArticleById(req.params.article_id, next)
         .then((article) => {
             res.status(200).send({ article });
         })
         .catch((err) => {
-            if (err.code === "22P02") {
-                next({ status: 400, msg: "invalid article id" });
-            } else {
-                next(err);
-            }
+            next(err);
         });
 };
