@@ -55,6 +55,7 @@ exports.selectArticleById = (id) => {
                     status: 404,
                     msg: "article not found"
                 });
+                // SQL errors resulting from invalid article_id inputs are handled in the controller
             } else {
                 return response.rows[0];
             }

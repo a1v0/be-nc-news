@@ -21,5 +21,11 @@ exports.getArticleById = (req, res, next) => {
         .then((article) => {
             res.status(200).send({ article });
         })
-        .catch(next);
+        .catch((err) => {
+            if (err.code === "22P02") {
+                next({ status: 400, msg: "invalid article id" });
+            } else {
+                next(err);
+            }
+        });
 };

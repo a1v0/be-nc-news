@@ -104,7 +104,7 @@ describe("/api/articles/:article_id", () => {
                 expect(msg).toBe("article not found");
             });
     });
-    test.skip("GET - 400: returns error when article id is invalid", () => {
+    test("GET - 400: returns error when article id is invalid", () => {
         return request(app)
             .get("/api/articles/obi-wan-kenobi")
             .expect(400)
