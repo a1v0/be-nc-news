@@ -198,7 +198,7 @@ describe("/api/articles/:article_id", () => {
                 expect(msg).toBe("invalid article id");
             });
     });
-    test.skip("PATCH - 404: returns error when article_id not found", () => {
+    test("PATCH - 404: returns error when article_id not found", () => {
         return request(app)
             .patch("/api/articles/999999")
             .send({ inc_votes: 25 })
