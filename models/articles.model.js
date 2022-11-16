@@ -61,3 +61,19 @@ exports.selectArticleById = (id, next) => {
             return Promise.reject(err);
         });
 };
+
+exports.updateArticleById = (id, inc_votes) => {
+    return db
+        .query(
+            `
+            UPDATE articles
+            SET votes = votes + $2
+            WHERE article_id = $1
+            RETURNING * ;
+        `,
+            [id, inc_votes]
+        )
+        .then((response) => {
+            return response.rows[0];
+        });
+};

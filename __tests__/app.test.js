@@ -114,7 +114,7 @@ describe("/api/articles/:article_id", () => {
     });
 
     // PATCH requests
-    test.skip("PATCH - 200: returns updated article when passed an object with a inc_votes property", () => {
+    test("PATCH - 200: returns updated article when passed an object with a inc_votes property", () => {
         return request(app)
             .patch("/api/articles/1")
             .send({ inc_votes: 20 })
@@ -126,7 +126,7 @@ describe("/api/articles/:article_id", () => {
                     topic: "mitch",
                     author: "butter_bridge",
                     body: "I find this existence challenging",
-                    created_at: 1594329060000,
+                    created_at: expect.any(String),
                     votes: 120
                 });
             });
