@@ -96,6 +96,23 @@ describe("/api/articles", () => {
             .expect(200)
             .then(({ body: { articles } }) => {
                 expect(articles).toBeSortedBy("title", { descending: true });
+
+                return request(app)
+                    .get("/api/articles?sort_by=created_at")
+                    .expect(200);
+            })
+            .then(({ body: { articles } }) => {
+                expect(articles).toBeSortedBy("created_at", {
+                    descending: true
+                });
+                return request(app)
+                    .get("/api/articles?sort_by=votes")
+                    .expect(200);
+            })
+            .then(({ body: { articles } }) => {
+                expect(articles).toBeSortedBy("votes", {
+                    descending: true
+                });
             });
     });
     test.skip("GET - 200: valid order query sets sorting order (defaults to descending)", () => {
