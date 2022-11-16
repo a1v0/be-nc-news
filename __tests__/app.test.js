@@ -174,7 +174,7 @@ describe("/api/articles/:article_id", () => {
     test("PATCH - 400: returns error when passed obj doesn't have an inc_votes property", () => {
         return request(app)
             .patch("/api/articles/1")
-            .send({ irrelevant_property: "something irrelevant" })
+            .send({ irrelevant_property: 3 })
             .expect(400)
             .then(({ body: { msg } }) => {
                 expect(msg).toBe("PATCH request body is incomplete");
