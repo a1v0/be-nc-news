@@ -1,8 +1,14 @@
 exports.psqlErrorHandler = (err, req, res, next) => {
-    if (err.code === "22P02") {
-        next({ status: 400, msg: "invalid article id" });
-    } else {
-        next(err);
+    switch (err.code) {
+        case "22P02":
+            next({ status: 400, msg: "invalid article id" });
+            break;
+        case "23503":
+            next({ status: 400, msg: "invalid username" });
+            break;
+        default:
+            next(err);
+            break;
     }
 };
 

@@ -235,7 +235,7 @@ describe("/api/articles/:article_id/comments", () => {
                 expect(msg).toBe("invalid article id");
             });
     });
-    test.skip("POST - 400: error when username does not exist", () => {
+    test("POST - 400: error when username does not exist", () => {
         return request(app)
             .post("/api/articles/6/comments")
             .send({
