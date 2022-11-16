@@ -65,10 +65,14 @@ exports.selectArticleById = (id, next) => {
 exports.updateArticleById = (id, inc_votes, next) => {
     return this.selectArticleById(id, next)
         .then((article) => {
-            if (!inc_votes) {
+            if (isNaN(Number(inc_votes))) {
+                const msg =
+                    inc_votes === undefined
+                        ? "PATCH request body is incomplete"
+                        : "data type of increment is incorrect";
                 return Promise.reject({
                     status: 400,
-                    msg: "PATCH request body is incomplete"
+                    msg
                 });
             }
             let voteCount = article.votes + Math.floor(inc_votes);

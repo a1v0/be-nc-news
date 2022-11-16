@@ -180,7 +180,7 @@ describe("/api/articles/:article_id", () => {
                 expect(msg).toBe("PATCH request body is incomplete");
             });
     });
-    test.skip("PATCH - 400: returns error when inc_votes === NaN", () => {
+    test("PATCH - 400: returns error when inc_votes === NaN", () => {
         return request(app)
             .patch("/api/articles/1")
             .send({ inc_votes: "you talkin'-a me?" })
