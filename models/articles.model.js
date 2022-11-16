@@ -132,3 +132,9 @@ exports.updateArticleById = (id, inc_votes, article) => {
             return response.rows[0];
         });
 };
+
+exports.selectUsers = () => {
+    return db.query(`SELECT * FROM users;`).then((response) => {
+        return response.rows;
+    });
+};

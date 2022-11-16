@@ -448,3 +448,21 @@ describe("misc error handling", () => {
             });
     });
 });
+
+describe("/api/users", () => {
+    test("GET - 200: return array of objects with user_id, username, name and avatar_url properties", () => {
+        return request(app)
+            .get("/api/users")
+            .expect(200)
+            .then(({ body: { users } }) => {
+                expect(users.length).toBe(4);
+                users.forEach((user) => {
+                    expect(user).toEqual({
+                        username: expect.any(String),
+                        name: expect.any(String),
+                        avatar_url: expect.any(String)
+                    });
+                });
+            });
+    });
+});

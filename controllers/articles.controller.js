@@ -3,7 +3,8 @@ const {
     selectArticleById,
     updateArticleById,
     selectCommentsByArticleId,
-    insertCommentByArticleId
+    insertCommentByArticleId,
+    selectUsers
 } = require("../models/articles.model.js");
 
 exports.getArticles = (req, res) => {
@@ -69,4 +70,10 @@ exports.postCommentByArticleId = (req, res, next) => {
                 next(err);
             }
         });
+};
+
+exports.getUsers = (req, res) => {
+    selectUsers().then((users) => {
+        res.status(200).send({ users });
+    });
 };

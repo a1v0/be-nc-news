@@ -6,7 +6,8 @@ const {
     getArticleById,
     patchArticleById,
     getCommentsByArticleId,
-    postCommentByArticleId
+    postCommentByArticleId,
+    getUsers
 } = require("./controllers/articles.controller.js");
 const { getTopics } = require("./controllers/topics.controller.js");
 const {
@@ -28,6 +29,8 @@ app.patch("/api/articles/:article_id", patchArticleById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+
+app.get("/api/users", getUsers);
 
 app.all("/*", (req, res, next) => {
     next({ status: 404, msg: "not found" });
