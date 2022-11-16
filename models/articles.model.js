@@ -2,13 +2,13 @@ const db = require("../db/connection.js");
 
 const { parseDateFieldWithMap } = require("../utils/utils.js");
 
-exports.selectArticles = ({ topic }) => {
+exports.selectArticles = ({ topic, sort_by }) => {
     let dbQuery = `
         SELECT
-            articles.author,
             title,
-            articles.article_id,
             topic,
+            articles.author,
+            articles.article_id,
             articles.created_at,
             articles.votes,
             CAST (COUNT(comments.article_id) AS INT)
@@ -22,21 +22,31 @@ exports.selectArticles = ({ topic }) => {
         injectionValues.push(topic);
         dbQuery += `WHERE topic = $1 `;
     }
+
     dbQuery += `
         GROUP BY
-            articles.author,
-            articles.title,
-            articles.created_at,
+            title,
             topic,
+            articles.author,
+            articles.created_at,
             articles.article_id
-        ORDER BY created_at DESC;
-    `;
+        `;
+
+    if (sort_by) {
+        injectionValues.push(sort_by);
+        dbQuery += `ORDER BY $1 DESC;`;
+        console.log(dbQuery);
+    } else {
+        dbQuery += `ORDER BY created_at DESC;`;
+    }
+
     return db.query(dbQuery, injectionValues).then((response) => {
+        console.log(response.rows);
         return parseDateFieldWithMap(response.rows);
     });
 };
 
-exports.selectArticleById = (id, next) => {
+exports.selectArticleById = (id) => {
     return db
         .query(
             `
