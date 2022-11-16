@@ -171,7 +171,7 @@ describe("/api/articles/:article_id", () => {
                 expect(article.votes).toBe(101);
             });
     });
-    test.skip("PATCH - 400: returns error when passed obj doesn't have an inc_votes property", () => {
+    test("PATCH - 400: returns error when passed obj doesn't have an inc_votes property", () => {
         return request(app)
             .patch("/api/articles/1")
             .send({ irrelevant_property: "something irrelevant" })
