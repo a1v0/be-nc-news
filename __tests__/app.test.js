@@ -189,7 +189,7 @@ describe("/api/articles/:article_id", () => {
                 expect(msg).toBe("data type of increment is incorrect");
             });
     });
-    test.skip("PATCH - 400: returns error when article_id is invalid", () => {
+    test("PATCH - 400: returns error when article_id is invalid", () => {
         return request(app)
             .patch("/api/articles/these-are-not-the-droids-you-are-looking-for")
             .send({ inc_votes: 25 })
