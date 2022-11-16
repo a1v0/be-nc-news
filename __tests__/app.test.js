@@ -115,6 +115,7 @@ describe("/api/articles/:article_id", () => {
 });
 
 describe("/api/articles/:article_id/comments", () => {
+    // GET requests
     test("GET - 200: responds with array of comments for any given article_id, with these properties: comment_id, votes, created_at, author, body", () => {
         return request(app)
             .get("/api/articles/1/comments")
@@ -162,6 +163,97 @@ describe("/api/articles/:article_id/comments", () => {
     test("GET - 404: returns error when no article found with given id", () => {
         return request(app)
             .get("/api/articles/99999/comments")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("article not found");
+            });
+    });
+
+    // POST requests
+    test("POST - 201: responds with posted comment (including comment_id and article_id) when comment comprises username and body only", () => {
+        return request(app)
+            .post("/api/articles/1/comments")
+            .send({
+                username: "butter_bridge",
+                body: "i am c-3po, human-cyborg relations"
+            })
+            .expect(201)
+            .then(({ body: { comment } }) => {
+                expect(comment).toEqual({
+                    comment_id: expect.any(Number),
+                    body: "i am c-3po, human-cyborg relations",
+                    article_id: 1,
+                    author: "butter_bridge",
+                    votes: 0,
+                    created_at: expect.any(String)
+                });
+            });
+    });
+    test("POST - 201: responds with posted comment, ignoring any superfluous properties in the passed object", () => {
+        return request(app)
+            .post("/api/articles/6/comments")
+            .send({
+                username: "icellusedkars",
+                body: "i am fluent in over six million forms of communication",
+                favouriteSmell: "napalm in the morning",
+                reasonsWhyIHateSand:
+                    "It's coarse and rough and irritating and it gets everywhere."
+            })
+            .expect(201)
+            .then(({ body: { comment } }) => {
+                expect(comment).toEqual({
+                    comment_id: expect.any(Number),
+                    body: "i am fluent in over six million forms of communication",
+                    article_id: 6,
+                    author: "icellusedkars",
+                    votes: 0,
+                    created_at: expect.any(String)
+                });
+            });
+    });
+    test("POST - 400: error when passed object is missing one of the necessary keys", () => {
+        return request(app)
+            .post("/api/articles/6/comments")
+            .send({
+                hatSize: 12,
+                favouriteWayToLoseFingers: "inexpertly feeding aggressive mules"
+            })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("POST request body is incomplete");
+            });
+    });
+    test("POST - 400: error when given invalid article_id", () => {
+        return request(app)
+            .post("/api/articles/blame-it-on-the-boogie/comments")
+            .send({
+                username: "icellusedkars",
+                body: "i am altering the deal. pray i do not alter it any further"
+            })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("invalid article id");
+            });
+    });
+    test("POST - 400: error when username does not exist", () => {
+        return request(app)
+            .post("/api/articles/6/comments")
+            .send({
+                username: "hellotheregeneralkenobi",
+                body: "not to worry: we're still flying half a ship"
+            })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("invalid username");
+            });
+    });
+    test("POST - 404: error when article does not exist", () => {
+        return request(app)
+            .post("/api/articles/999999999/comments")
+            .send({
+                username: "icellusedkars",
+                body: "i am altering the deal. pray i do not alter it any further"
+            })
             .expect(404)
             .then(({ body: { msg } }) => {
                 expect(msg).toBe("article not found");

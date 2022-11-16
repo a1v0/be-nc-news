@@ -67,3 +67,26 @@ exports.selectCommentsByArticleId = (id) => {
             return parseDateFieldWithMap(response.rows);
         });
 };
+
+exports.insertCommentByArticleId = (id, { body, username }) => {
+    return db
+        .query(
+            `
+            INSERT INTO comments (
+                article_id,
+                body,
+                author,
+                votes
+            ) VALUES (
+                $1,
+                $2,
+                $3,
+                0
+            ) RETURNING * ;
+        `,
+            [id, body, username]
+        )
+        .then((response) => {
+            return response.rows[0];
+        });
+};
