@@ -77,6 +77,62 @@ describe("/api/articles", () => {
                 expect(articles[2].comment_count).toBe(0);
             });
     });
+
+    // querystring tests
+    test.skip("GET - 200: valid topic query returns results only from that topic", () => {
+        return request(app)
+            .get("/api/articles?topic=mitch")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+                expect(articles.length).toBe(11);
+                articles.forEach((article) => {
+                    expect(article.topic).toBe("mitch");
+                });
+            });
+    });
+    test.skip("GET - 200: valid sort_by query sorts by given column (and defaults to date)", () => {
+        return request(app)
+            .get("/api/articles?sort_by=title")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+                expect(articles).toBeSortedBy("title", { descending: true });
+            });
+    });
+    test.skip("GET - 200: valid order query sets sorting order (defaults to descending)", () => {
+        return request(app)
+            .get("/api/articles?order=asc")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+                expect(articles).toBeSortedBy("created_at", {
+                    descending: false
+                });
+            });
+    });
+    test.skip("GET - 200: valid combination of all three queries works as desired", () => {
+        return request(app)
+            .get("/api/articles?sort_by=body&order=asc&topic=mitch")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+                expect(articles.length).toBe(11);
+                expect(articles).toBeSortedBy("body", { descending: false });
+            });
+    });
+    test.skip("GET - 400: invalid order query returns error", () => {
+        return request(app)
+            .get("/api/articles?order=gobbledigook")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("invalid querystring");
+            });
+    });
+    test.skip("GET - 400: invalid sort_by query returns error", () => {
+        return request(app)
+            .get("/api/articles?sort_by=gobbledigook")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("invalid querystring");
+            });
+    });
 });
 
 describe("/api/articles/:article_id", () => {
