@@ -2,34 +2,38 @@ const db = require("../db/connection.js");
 
 const { parseDateFieldWithMap } = require("../utils/utils.js");
 
-exports.selectArticles = () => {
-    return db
-        .query(
-            `
-                SELECT
-                    articles.author,
-                    title,
-                    articles.article_id,
-                    topic,
-                    articles.created_at,
-                    articles.votes,
-                    CAST (COUNT(comments.article_id) AS INT)
-                        AS comment_count
-                FROM articles
-                LEFT OUTER JOIN comments
-                ON articles.article_id = comments.article_id
-                GROUP BY
-                    articles.author,
-                    articles.title,
-                    articles.created_at,
-                    topic,
-                    articles.article_id
-                ORDER BY created_at DESC;
-            `
-        )
-        .then((response) => {
-            return parseDateFieldWithMap(response.rows);
-        });
+exports.selectArticles = ({ topic }) => {
+    let dbQuery = `
+        SELECT
+            articles.author,
+            title,
+            articles.article_id,
+            topic,
+            articles.created_at,
+            articles.votes,
+            CAST (COUNT(comments.article_id) AS INT)
+                AS comment_count
+        FROM articles
+        LEFT OUTER JOIN comments
+        ON articles.article_id = comments.article_id `;
+    const injectionValues = [];
+
+    if (topic) {
+        injectionValues.push(topic);
+        dbQuery += `WHERE topic = $1 `;
+    }
+    dbQuery += `
+        GROUP BY
+            articles.author,
+            articles.title,
+            articles.created_at,
+            topic,
+            articles.article_id
+        ORDER BY created_at DESC;
+    `;
+    return db.query(dbQuery, injectionValues).then((response) => {
+        return parseDateFieldWithMap(response.rows);
+    });
 };
 
 exports.selectArticleById = (id, next) => {

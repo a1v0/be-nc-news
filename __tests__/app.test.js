@@ -79,7 +79,7 @@ describe("/api/articles", () => {
     });
 
     // querystring tests
-    test.skip("GET - 200: valid topic query returns results only from that topic", () => {
+    test("GET - 200: valid topic query returns results only from that topic", () => {
         return request(app)
             .get("/api/articles?topic=mitch")
             .expect(200)
