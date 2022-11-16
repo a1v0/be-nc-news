@@ -21,8 +21,13 @@ exports.getArticleById = (req, res, next) => {
             next(err);
         });
 };
+
 exports.patchArticleById = (req, res, next) => {
-    updateArticleById(req.params.article_id, req.body.inc_votes, next)
+    const article_id = req.params.article_id;
+    return selectArticleById(article_id, next)
+        .then((article) => {
+            return updateArticleById(article_id, req.body.inc_votes, article);
+        })
         .then((article) => {
             res.status(200).send({ article });
         })

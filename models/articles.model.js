@@ -91,34 +91,29 @@ exports.insertCommentByArticleId = (id, { body, username }) => {
         });
 };
 
-exports.updateArticleById = (id, inc_votes, next) => {
-    return this.selectArticleById(id, next)
-        .then((article) => {
-            if (isNaN(Number(inc_votes))) {
-                const msg =
-                    inc_votes === undefined
-                        ? "PATCH request body is incomplete"
-                        : "data type of increment is incorrect";
-                return Promise.reject({
-                    status: 400,
-                    msg
-                });
-            }
-            let voteCount = article.votes + Math.floor(inc_votes);
-            if (voteCount < 0) voteCount = 0;
-            return voteCount;
-        })
-        .then((voteCount) => {
-            return db.query(
-                `
+exports.updateArticleById = (id, inc_votes, article) => {
+    if (isNaN(Number(inc_votes))) {
+        const msg =
+            inc_votes === undefined
+                ? "PATCH request body is incomplete"
+                : "data type of increment is incorrect";
+        return Promise.reject({
+            status: 400,
+            msg
+        });
+    }
+    let voteCount = article.votes + Math.floor(inc_votes);
+    if (voteCount < 0) voteCount = 0;
+    return db
+        .query(
+            `
                     UPDATE articles
                     SET votes = $2
                     WHERE article_id = $1
                     RETURNING * ;
                 `,
-                [id, voteCount]
-            );
-        })
+            [id, voteCount]
+        )
         .then((response) => {
             return response.rows[0];
         });
