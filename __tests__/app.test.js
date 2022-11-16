@@ -153,7 +153,7 @@ describe("/api/articles/:article_id", () => {
                 });
             });
     });
-    test.skip("PATCH - 200: sets votes property to 0 if passed object makes it negative", () => {
+    test("PATCH - 200: sets votes property to 0 if passed object makes it negative", () => {
         return request(app)
             .patch("/api/articles/1")
             .send({ inc_votes: -200 })

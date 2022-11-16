@@ -62,17 +62,24 @@ exports.selectArticleById = (id, next) => {
         });
 };
 
-exports.updateArticleById = (id, inc_votes) => {
-    return db
-        .query(
-            `
-                UPDATE articles
-                SET votes = votes + $2
-                WHERE article_id = $1
-                RETURNING * ;
-            `,
-            [id, inc_votes]
-        )
+exports.updateArticleById = (id, inc_votes, next) => {
+    return this.selectArticleById(id, next)
+        .then((article) => {
+            let voteCount = article.votes + inc_votes;
+            if (voteCount < 0) voteCount = 0;
+            return voteCount;
+        })
+        .then((voteCount) => {
+            return db.query(
+                `
+                    UPDATE articles
+                    SET votes = $2
+                    WHERE article_id = $1
+                    RETURNING * ;
+                `,
+                [id, voteCount]
+            );
+        })
         .then((response) => {
             return response.rows[0];
         });
