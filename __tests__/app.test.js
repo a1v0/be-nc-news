@@ -162,7 +162,7 @@ describe("/api/articles/:article_id", () => {
                 expect(article.votes).toBe(0);
             });
     });
-    test.skip("PATCH - 200: rounds inc_votes down to nearest integer if given a float", () => {
+    test("PATCH - 200: rounds inc_votes down to nearest integer if given a float", () => {
         return request(app)
             .patch("/api/articles/1")
             .send({ inc_votes: 1.99997 })

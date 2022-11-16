@@ -65,7 +65,7 @@ exports.selectArticleById = (id, next) => {
 exports.updateArticleById = (id, inc_votes, next) => {
     return this.selectArticleById(id, next)
         .then((article) => {
-            let voteCount = article.votes + inc_votes;
+            let voteCount = article.votes + Math.floor(inc_votes);
             if (voteCount < 0) voteCount = 0;
             return voteCount;
         })
