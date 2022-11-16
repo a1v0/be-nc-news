@@ -112,6 +112,101 @@ describe("/api/articles/:article_id", () => {
                 expect(msg).toBe("invalid article id");
             });
     });
+
+    // PATCH requests
+    test("PATCH - 200: returns updated article when passed an object with a inc_votes property", () => {
+        return request(app)
+            .patch("/api/articles/1")
+            .send({ inc_votes: 20 })
+            .expect(200)
+            .then(({ body: { article } }) => {
+                expect(article).toEqual({
+                    article_id: 1,
+                    title: "Living in the shadow of a great man",
+                    topic: "mitch",
+                    author: "butter_bridge",
+                    body: "I find this existence challenging",
+                    created_at: expect.any(String),
+                    votes: 120
+                });
+            });
+    });
+    test("PATCH - 200: returns as normal, ignoring superfluous properties", () => {
+        return request(app)
+            .patch("/api/articles/1")
+            .send({
+                inc_votes: 20,
+                topic: "hello",
+                actorWhoPlaysDrEvilAustinPowersAndFatBastardInTheRenownedAndExcellentAustinPowersTrilogy:
+                    "Mike Myers"
+            })
+            .expect(200)
+            .then(({ body: { article } }) => {
+                expect(article).toEqual({
+                    article_id: 1,
+                    title: "Living in the shadow of a great man",
+                    topic: "mitch",
+                    author: "butter_bridge",
+                    body: "I find this existence challenging",
+                    created_at: expect.any(String),
+                    votes: 120
+                });
+            });
+    });
+    test("PATCH - 200: sets votes property to 0 if passed object makes it negative", () => {
+        return request(app)
+            .patch("/api/articles/1")
+            .send({ inc_votes: -200 })
+            .expect(200)
+            .then(({ body: { article } }) => {
+                expect(article.votes).toBe(0);
+            });
+    });
+    test("PATCH - 200: rounds inc_votes down to nearest integer if given a float", () => {
+        return request(app)
+            .patch("/api/articles/1")
+            .send({ inc_votes: 1.99997 })
+            .expect(200)
+            .then(({ body: { article } }) => {
+                expect(article.votes).toBe(101);
+            });
+    });
+    test("PATCH - 400: returns error when passed obj doesn't have an inc_votes property", () => {
+        return request(app)
+            .patch("/api/articles/1")
+            .send({ irrelevant_property: 3 })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("PATCH request body is incomplete");
+            });
+    });
+    test("PATCH - 400: returns error when inc_votes === NaN", () => {
+        return request(app)
+            .patch("/api/articles/1")
+            .send({ inc_votes: "you talkin'-a me?" })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("data type of increment is incorrect");
+            });
+    });
+    test("PATCH - 400: returns error when article_id is invalid", () => {
+        return request(app)
+            .patch("/api/articles/these-are-not-the-droids-you-are-looking-for")
+            .send({ inc_votes: 25 })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("invalid article id");
+            });
+    });
+    test("PATCH - 404: returns error when article_id not found", () => {
+        return request(app)
+            .patch("/api/articles/999999")
+            .send({ inc_votes: 25 })
+            .expect(404)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("article not found");
+            });
+    });
 });
 
 describe("/api/articles/:article_id/comments", () => {

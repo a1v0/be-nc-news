@@ -6,25 +6,25 @@ exports.selectArticles = () => {
     return db
         .query(
             `
-            SELECT
-                articles.author,
-                title,
-                articles.article_id,
-                topic,
-                articles.created_at,
-                articles.votes,
-                CAST (COUNT(comments.article_id) AS INT)
-                    AS comment_count
-            FROM articles
-            LEFT OUTER JOIN comments
-            ON articles.article_id = comments.article_id
-            GROUP BY
-                articles.author,
-                articles.title,
-                articles.created_at,
-                topic,
-                articles.article_id
-            ORDER BY created_at DESC;
+                SELECT
+                    articles.author,
+                    title,
+                    articles.article_id,
+                    topic,
+                    articles.created_at,
+                    articles.votes,
+                    CAST (COUNT(comments.article_id) AS INT)
+                        AS comment_count
+                FROM articles
+                LEFT OUTER JOIN comments
+                ON articles.article_id = comments.article_id
+                GROUP BY
+                    articles.author,
+                    articles.title,
+                    articles.created_at,
+                    topic,
+                    articles.article_id
+                ORDER BY created_at DESC;
             `
         )
         .then((response) => {
@@ -36,8 +36,8 @@ exports.selectArticleById = (id, next) => {
     return db
         .query(
             `
-            SELECT * FROM articles
-            WHERE article_id = $1;
+                SELECT * FROM articles
+                WHERE article_id = $1;
             `,
             [id]
         )
@@ -85,6 +85,34 @@ exports.insertCommentByArticleId = (id, { body, username }) => {
             ) RETURNING * ;
         `,
             [id, body, username]
+        )
+        .then((response) => {
+            return response.rows[0];
+        });
+};
+
+exports.updateArticleById = (id, inc_votes, article) => {
+    if (isNaN(Number(inc_votes))) {
+        const msg =
+            inc_votes === undefined
+                ? "PATCH request body is incomplete"
+                : "data type of increment is incorrect";
+        return Promise.reject({
+            status: 400,
+            msg
+        });
+    }
+    let voteCount = article.votes + Math.floor(inc_votes);
+    if (voteCount < 0) voteCount = 0;
+    return db
+        .query(
+            `
+                    UPDATE articles
+                    SET votes = $2
+                    WHERE article_id = $1
+                    RETURNING * ;
+                `,
+            [id, voteCount]
         )
         .then((response) => {
             return response.rows[0];
