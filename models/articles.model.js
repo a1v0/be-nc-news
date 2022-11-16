@@ -1,5 +1,6 @@
 const db = require("../db/connection.js");
-const { psqlErrorHandler } = require("../errors/psql.error.js");
+
+const { parseDateFieldWithMap } = require("../utils/utils.js");
 
 exports.selectArticles = () => {
     return db
@@ -27,11 +28,7 @@ exports.selectArticles = () => {
             `
         )
         .then((response) => {
-            return response.rows.map((row) => {
-                const rowCopy = { ...row };
-                rowCopy.created_at = Date.parse(rowCopy.created_at);
-                return rowCopy;
-            });
+            return parseDateFieldWithMap(response.rows);
         });
 };
 
@@ -53,12 +50,44 @@ exports.selectArticleById = (id, next) => {
             } else {
                 return response.rows[0];
             }
-        })
-        .catch((err) => {
-            if (err.code) {
-                return psqlErrorHandler(err, next);
-            }
-            return Promise.reject(err);
+        });
+};
+
+exports.selectCommentsByArticleId = (id) => {
+    return db
+        .query(
+            `
+                SELECT * FROM comments
+                WHERE article_id = $1
+                ORDER BY created_at DESC;
+            `,
+            [id]
+        )
+        .then((response) => {
+            return parseDateFieldWithMap(response.rows);
+        });
+};
+
+exports.insertCommentByArticleId = (id, { body, username }) => {
+    return db
+        .query(
+            `
+            INSERT INTO comments (
+                article_id,
+                body,
+                author,
+                votes
+            ) VALUES (
+                $1,
+                $2,
+                $3,
+                0
+            ) RETURNING * ;
+        `,
+            [id, body, username]
+        )
+        .then((response) => {
+            return response.rows[0];
         });
 };
 
