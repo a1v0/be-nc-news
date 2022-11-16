@@ -131,7 +131,7 @@ describe("/api/articles/:article_id", () => {
                 });
             });
     });
-    test.skip("PATCH - 200: returns as normal, ignoring superfluous properties", () => {
+    test("PATCH - 200: returns as normal, ignoring superfluous properties", () => {
         return request(app)
             .patch("/api/articles/1")
             .send({
@@ -148,7 +148,7 @@ describe("/api/articles/:article_id", () => {
                     topic: "mitch",
                     author: "butter_bridge",
                     body: "I find this existence challenging",
-                    created_at: 1594329060000,
+                    created_at: expect.any(String),
                     votes: 120
                 });
             });
