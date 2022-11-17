@@ -1,27 +1,79 @@
 {
-  "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
-  },
-  "GET /api/topics": {
-    "description": "serves an array of all topics",
-    "queries": [],
-    "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
-    }
-  },
-  "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
-    "exampleResponse": {
-      "articles": [
-        {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
+    "GET /api": {
+        "description": "serves up a json representation of all the available endpoints of the api"
+    },
+    "GET /api/topics": {
+        "description": "serves an array of all topics",
+        "queries": [],
+        "exampleResponse": {
+            "topics": [{ "slug": "football", "description": "Footie!" }]
         }
-      ]
+    },
+    "GET /api/articles": {
+        "description": "serves an array of all topics",
+        "queries": ["topic", "sort_by", "order"],
+        "exampleResponse": {
+            "articles": [
+                {
+                    "title": "Seafood substitutions are increasing",
+                    "topic": "cooking",
+                    "author": "weegembump",
+                    "body": "Text from the article..",
+                    "created_at": 1527695953341
+                }
+            ]
+        }
+    },
+    "GET /api/articles/:article_id": {
+        "description": "serves a specific article including comment count",
+        "exampleResponse": {
+            "article": {
+                "article_id": 1,
+                "title": "Am I a cat?",
+                "topic": "mitch",
+                "author": "icellusedkars",
+                "body": "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
+                "created_at": 1579126860000,
+                "votes": 0,
+                "comment_count": 0
+            }
+        }
+    },
+    "PATCH /api/articles/:article_id": {
+        "description": "updates the votes property of a given article by specific amount and responds with updated article object. Accepts signed integers. Floats will be rounded down. Count will never go below 0",
+        "exampleInput": { "inc_votes": -5 }
+    },
+    "GET /api/articles/:article_id/comments": {
+        "description": "serves an array of all comments associated with a particular article",
+        "queries": []
+    },
+    "POST /api/articles/:article_id/comments": {
+        "description": "posts a comment to a specific article, returning the new comment object",
+        "exampleResponse": {
+            "comment": {
+                "comment_id": 10,
+                "body": "i am c-3po, human-cyborg relations",
+                "article_id": 1,
+                "author": "random-author",
+                "votes": 0,
+                "created_at": "SQL TIMESTAMP WITHOUT TIME ZONE"
+            }
+        }
+    },
+    "GET /api/users": {
+        "description": "returns an array of all users",
+        "queries": [],
+        "exampleResponse": {
+            "users": [
+                {
+                    "username": "username",
+                    "name": "Mr Name",
+                    "avatar_url": "https://www.example.com"
+                }
+            ]
+        }
+    },
+    "DELETE /api/comments/:comment_id": {
+        "description": "deletes a specific comment. Returns 204 with no response"
     }
-  }
 }
