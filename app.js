@@ -1,11 +1,7 @@
 const express = require("express");
 const app = express();
 
-const {
-    getUsers,
-    deleteCommentById,
-    getEndpoints
-} = require("./controllers/articles.controller.js");
+const { getEndpoints } = require("./controllers/articles.controller.js");
 const {
     customErrorHandler,
     lastResort500Error,
@@ -14,6 +10,7 @@ const {
 const articlesRouter = require("./routes/articles.route.js");
 const commentsRouter = require("./routes/comments.route.js");
 const topicsRouter = require("./routes/topics.route.js");
+const usersRouter = require("./routes/users.route.js");
 
 app.use(express.json());
 
@@ -23,7 +20,7 @@ app.use("/api/topics", topicsRouter);
 
 app.use("/api/articles", articlesRouter);
 
-app.get("/api/users", getUsers);
+app.use("/api/users", usersRouter);
 
 app.use("/api/comments", commentsRouter);
 
