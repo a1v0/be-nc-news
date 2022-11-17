@@ -137,7 +137,7 @@ describe("/api/articles", () => {
                     });
                 });
         });
-        test.skip("GET - 400: invalid order query returns error", () => {
+        test("GET - 400: invalid order query returns error", () => {
             return request(app)
                 .get("/api/articles?order=gobbledigook")
                 .expect(400)
@@ -153,6 +153,7 @@ describe("/api/articles", () => {
                     expect(msg).toBe("invalid querystring");
                 });
         });
+        test.todo("GET - 404: invalid topic query returns empty array");
     });
 });
 

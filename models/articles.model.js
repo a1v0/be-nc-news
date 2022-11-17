@@ -15,11 +15,20 @@ exports.selectArticles = ({
         "title",
         "topic",
         "author",
+        "article_id",
         "created_at",
-        "article_id"
+        "votes",
+        "comment_count"
     ];
 
     const validOrderQueries = ["asc", "desc"];
+
+    if (
+        !validSortQueries.includes(sort_by) ||
+        !validOrderQueries.includes(order)
+    ) {
+        return Promise.reject({ status: 400, msg: "invalid querystring" });
+    }
 
     let dbQuery = `
         SELECT
@@ -50,10 +59,15 @@ exports.selectArticles = ({
             articles.article_id
         ORDER BY articles.${sort_by} ${order};
         `;
-
-    return db.query(dbQuery, injectionValues).then((response) => {
-        return parseDateFieldWithMap(response.rows);
-    });
+    return db
+        .query(dbQuery, injectionValues)
+        .then((response) => {
+            return parseDateFieldWithMap(response.rows);
+        })
+        .catch((err) => {
+            console.log(err);
+            return err;
+        });
 };
 
 exports.selectArticleById = (id) => {

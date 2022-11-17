@@ -7,10 +7,12 @@ const {
     selectUsers
 } = require("../models/articles.model.js");
 
-exports.getArticles = (req, res) => {
-    return selectArticles(req.query).then((articles) => {
-        res.status(200).send({ articles });
-    });
+exports.getArticles = (req, res, next) => {
+    return selectArticles(req.query)
+        .then((articles) => {
+            res.status(200).send({ articles });
+        })
+        .catch(next);
 };
 
 exports.getArticleById = (req, res, next) => {
