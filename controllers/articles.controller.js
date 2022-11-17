@@ -4,7 +4,8 @@ const {
     updateArticleById,
     selectCommentsByArticleId,
     insertCommentByArticleId,
-    selectUsers
+    selectUsers,
+    deleteFromCommentsByCommentId
 } = require("../models/articles.model.js");
 
 exports.getArticles = (req, res, next) => {
@@ -21,6 +22,7 @@ exports.getArticleById = (req, res, next) => {
             res.status(200).send({ article });
         })
         .catch((err) => {
+            err.invalidProperty = "article id";
             next(err);
         });
 };
@@ -35,6 +37,7 @@ exports.patchArticleById = (req, res, next) => {
             res.status(200).send({ article });
         })
         .catch((err) => {
+            err.invalidProperty = "article id";
             next(err);
         });
 };
@@ -49,6 +52,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
             res.status(200).send({ comments });
         })
         .catch((err) => {
+            err.invalidProperty = "article id";
             next(err);
         });
 };
@@ -69,6 +73,7 @@ exports.postCommentByArticleId = (req, res, next) => {
                     msg: "POST request body is incomplete"
                 });
             } else {
+                err.invalidProperty = "article id";
                 next(err);
             }
         });
@@ -78,4 +83,15 @@ exports.getUsers = (req, res) => {
     selectUsers().then((users) => {
         res.status(200).send({ users });
     });
+};
+
+exports.deleteCommentById = (req, res, next) => {
+    deleteFromCommentsByCommentId(req.params.comment_id)
+        .then(() => {
+            res.sendStatus(204);
+        })
+        .catch((err) => {
+            err.invalidProperty = "comment id";
+            next(err);
+        });
 };

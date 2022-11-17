@@ -488,3 +488,25 @@ describe("misc error handling", () => {
             });
     });
 });
+
+describe("/api/comments/:comment_id", () => {
+    test("DELETE - 204: responds with no content when comment is successfully deleted", () => {
+        return request(app).delete("/api/comments/1").expect(204);
+    });
+    test("DELETE - 400: responds with error when comment_id is invalid", () => {
+        return request(app)
+            .delete("/api/comments/im-a-little-teapot")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("invalid comment id");
+            });
+    });
+    test("DELETE - 404: responds with error when comment doesn't exist", () => {
+        return request(app)
+            .delete("/api/comments/9999999")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("comment not found");
+            });
+    });
+});

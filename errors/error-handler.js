@@ -1,7 +1,7 @@
 exports.psqlErrorHandler = (err, req, res, next) => {
     switch (err.code) {
         case "22P02":
-            next({ status: 400, msg: "invalid article id" });
+            next({ status: 400, msg: `invalid ${err.invalidProperty}` });
             break;
         case "23503":
             next({ status: 400, msg: "invalid username" });
