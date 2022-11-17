@@ -153,7 +153,16 @@ describe("/api/articles", () => {
                     expect(msg).toBe("invalid querystring");
                 });
         });
-        test.todo("GET - 404: invalid topic query returns empty array");
+        test("GET - 404: invalid topic query returns error", () => {
+            return request(app)
+                .get(
+                    "/api/articles?topic=Beethoven'sSeventhSymphonyIsTheBestOne"
+                )
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("topic not found");
+                });
+        });
     });
 });
 
