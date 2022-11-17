@@ -126,13 +126,13 @@ describe("/api/articles", () => {
                     });
                 });
         });
-        test.skip("GET - 200: valid combination of all three queries works as desired, and uppercase is ignored", () => {
+        test("GET - 200: valid combination of all three queries works as desired, and uppercase is ignored", () => {
             return request(app)
-                .get("/api/articles?sort_by=BODY&order=ASC&topic=MITCH")
+                .get("/api/articles?sort_by=AUTHOR&order=ASC&topic=MITCH")
                 .expect(200)
                 .then(({ body: { articles } }) => {
                     expect(articles.length).toBe(11);
-                    expect(articles).toBeSortedBy("body", {
+                    expect(articles).toBeSortedBy("author", {
                         descending: false
                     });
                 });

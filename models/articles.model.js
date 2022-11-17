@@ -7,6 +7,10 @@ exports.selectArticles = ({
     sort_by = "created_at",
     order = "desc"
 }) => {
+    if (topic) topic = topic.toLowerCase();
+    sort_by = sort_by.toLowerCase();
+    order = order.toLowerCase();
+
     const validSortQueries = [
         "title",
         "topic",
