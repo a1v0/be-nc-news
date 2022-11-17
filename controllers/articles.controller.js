@@ -4,7 +4,8 @@ const {
     updateArticleById,
     selectCommentsByArticleId,
     insertCommentByArticleId,
-    selectUsers
+    selectUsers,
+    deleteFromCommentsByCommentId
 } = require("../models/articles.model.js");
 
 exports.getArticles = (req, res, next) => {
@@ -77,5 +78,11 @@ exports.postCommentByArticleId = (req, res, next) => {
 exports.getUsers = (req, res) => {
     selectUsers().then((users) => {
         res.status(200).send({ users });
+    });
+};
+
+exports.deleteCommentById = (req, res, next) => {
+    deleteFromCommentsByCommentId(req.params.comment_id).then(() => {
+        res.sendStatus(204);
     });
 };

@@ -490,21 +490,14 @@ describe("misc error handling", () => {
 });
 
 describe("/api/comments/:comment_id", () => {
-    test.skip("DELETE - 204: responds with no content when comment is successfully deleted", () => {
-        return request(app)
-            .delete("/api/comments/1")
-            .expect(204)
-            .then((response) => {
-                // This .then block might cause problems, because my aim is not to send any response. Let's see
-                expect(response).toBe(undefined);
-            });
+    test("DELETE - 204: responds with no content when comment is successfully deleted", () => {
+        return request(app).delete("/api/comments/1").expect(204);
     });
     test.skip("DELETE - 400: responds with error when comment_id is invalid", () => {
         return request(app)
             .delete("/api/comments/im-a-little-teapot")
             .expect(400)
             .then(({ body: { msg } }) => {
-                // This .then block might cause problems, because my aim is not to send any response. Let's see
                 expect(msg).toBe("invalid comment id");
             });
     });
