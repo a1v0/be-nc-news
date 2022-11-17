@@ -479,7 +479,7 @@ describe("/api/users", () => {
 });
 
 describe("/api/users/:username", () => {
-    test.skip("GET - 200: return user with username, name and avatar_url properties", () => {
+    test("GET - 200: return user with username, name and avatar_url properties", () => {
         return request(app)
             .get("/api/users/icellusedkars")
             .expect(200)

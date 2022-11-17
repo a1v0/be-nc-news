@@ -5,3 +5,17 @@ exports.selectUsers = () => {
         return response.rows;
     });
 };
+
+exports.selectUserByUsername = (username) => {
+    return db
+        .query(
+            `
+            SELECT * FROM users
+            WHERE username = $1;
+        `,
+            [username]
+        )
+        .then((response) => {
+            return response.rows[0];
+        });
+};
