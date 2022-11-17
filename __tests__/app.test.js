@@ -89,6 +89,17 @@ describe("/api/articles", () => {
                     });
                 });
         });
+        test("GET - 200: valid topic query for empty topic returns empty array", () => {
+            return request(app)
+                .get("/api/articles?topic=paper")
+                .expect(200)
+                .then(({ body: { articles } }) => {
+                    expect(articles.length).toBe(0);
+                    articles.forEach((article) => {
+                        expect(article.topic).toBe("paper");
+                    });
+                });
+        });
         test("GET - 200: valid sort_by query sorts by given column (and defaults to date)", () => {
             return request(app)
                 .get("/api/articles?sort_by=title")
@@ -153,7 +164,7 @@ describe("/api/articles", () => {
                     expect(msg).toBe("invalid querystring");
                 });
         });
-        test.skip("GET - 404: invalid topic query returns error", () => {
+        test("GET - 404: invalid topic query returns error", () => {
             return request(app)
                 .get(
                     "/api/articles?topic=Beethoven'sSeventhSymphonyIsTheBestOne"
