@@ -511,7 +511,7 @@ describe("/api/comments/:comment_id", () => {
     });
 });
 
-describe.only("/api", () => {
+describe("/api", () => {
     test("GET - 200: returns JSON data retrieved from endpoints.json", () => {
         return request(app)
             .get("/api")
