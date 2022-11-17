@@ -145,7 +145,7 @@ describe("/api/articles", () => {
                     expect(msg).toBe("invalid querystring");
                 });
         });
-        test.skip("GET - 400: invalid sort_by query returns error", () => {
+        test("GET - 400: invalid sort_by query returns error", () => {
             return request(app)
                 .get("/api/articles?sort_by=gobbledigook")
                 .expect(400)
