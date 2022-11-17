@@ -3,9 +3,7 @@ const {
     selectArticleById,
     updateArticleById,
     selectCommentsByArticleId,
-    insertCommentByArticleId,
-    selectUsers,
-    deleteFromCommentsByCommentId
+    insertCommentByArticleId
 } = require("../models/articles.model.js");
 const endpointsJSON = require("../endpoints.json");
 
@@ -77,23 +75,6 @@ exports.postCommentByArticleId = (req, res, next) => {
                 err.invalidProperty = "article id";
                 next(err);
             }
-        });
-};
-
-exports.getUsers = (req, res) => {
-    selectUsers().then((users) => {
-        res.status(200).send({ users });
-    });
-};
-
-exports.deleteCommentById = (req, res, next) => {
-    deleteFromCommentsByCommentId(req.params.comment_id)
-        .then(() => {
-            res.sendStatus(204);
-        })
-        .catch((err) => {
-            err.invalidProperty = "comment id";
-            next(err);
         });
 };
 
