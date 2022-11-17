@@ -18,6 +18,24 @@ afterAll(() => {
     return db.end();
 });
 
+describe("/api", () => {
+    test("GET - 200: returns JSON data retrieved from endpoints.json", () => {
+        return request(app)
+            .get("/api")
+            .expect(200)
+            .then(({ body: { endpoints } }) => {
+                // This isn't a perfect expect statement, but all I can know for sure is that, when the test runs, there will be at least 9 endpoints
+                const endpointKeys = Object.keys(endpoints);
+                expect(endpointKeys.length).toBeGreaterThan(8);
+                endpointKeys.forEach((endpointKey) => {
+                    expect(endpoints[endpointKey]).toHaveProperty(
+                        "description"
+                    );
+                });
+            });
+    });
+});
+
 describe("/api/topics", () => {
     test("GET - 200: respond with array of topic objects, each having only 'slug' and 'description' properties", () => {
         return request(app)
@@ -503,42 +521,143 @@ describe("/api/users/:username", () => {
 });
 
 describe("/api/comments/:comment_id", () => {
-    test("DELETE - 204: responds with no content when comment is successfully deleted", () => {
-        return request(app).delete("/api/comments/1").expect(204);
-    });
-    test("DELETE - 400: responds with error when comment_id is invalid", () => {
-        return request(app)
-            .delete("/api/comments/im-a-little-teapot")
-            .expect(400)
-            .then(({ body: { msg } }) => {
-                expect(msg).toBe("invalid comment id");
-            });
-    });
-    test("DELETE - 404: responds with error when comment doesn't exist", () => {
-        return request(app)
-            .delete("/api/comments/9999999")
-            .expect(404)
-            .then(({ body: { msg } }) => {
-                expect(msg).toBe("comment not found");
-            });
-    });
-});
-
-describe("/api", () => {
-    test("GET - 200: returns JSON data retrieved from endpoints.json", () => {
-        return request(app)
-            .get("/api")
-            .expect(200)
-            .then(({ body: { endpoints } }) => {
-                // This isn't a perfect expect statement, but all I can know for sure is that, when the test runs, there will be at least 9 endpoints
-                const endpointKeys = Object.keys(endpoints);
-                expect(endpointKeys.length).toBeGreaterThan(8);
-                endpointKeys.forEach((endpointKey) => {
-                    expect(endpoints[endpointKey]).toHaveProperty(
-                        "description"
-                    );
+    describe("PATCH requests", () => {
+        test("PATCH - 200: returns updated comment when passed an object with a inc_votes property", () => {
+            return request(app)
+                .patch("/api/comments/1")
+                .send({ inc_votes: 1 })
+                .expect(200)
+                .then(({ body: { comment } }) => {
+                    expect(comment).toMatchObject({
+                        body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                        votes: 17,
+                        author: "butter_bridge",
+                        article_id: 9,
+                        created_at: expect.any(String)
+                    });
+                })
+                .then(() => {
+                    return request(app)
+                        .patch("/api/comments/2")
+                        .send({ inc_votes: -1 })
+                        .expect(200);
+                })
+                .then(({ body: { comment } }) => {
+                    expect(comment).toMatchObject({
+                        body: "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+                        votes: 13,
+                        author: "butter_bridge",
+                        article_id: 1,
+                        created_at: expect.any(String)
+                    });
                 });
-            });
+        });
+        test("PATCH - 200: returns as normal, ignoring superfluous properties", () => {
+            return request(app)
+                .patch("/api/comments/1")
+                .send({
+                    inc_votes: 1,
+                    imDreamingOfA: "white Christmas",
+                    hank: "Scorpio"
+                })
+                .expect(200)
+                .then(({ body: { comment } }) => {
+                    expect(comment).toMatchObject({
+                        body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                        votes: 17,
+                        author: "butter_bridge",
+                        article_id: 9,
+                        created_at: expect.any(String)
+                    });
+                });
+        });
+        test("PATCH - 200: sets votes property to 0 if passed object makes it negative", () => {
+            return request(app)
+                .patch("/api/comments/1")
+                .send({ inc_votes: -1000 })
+                .expect(200)
+                .then(({ body: { comment } }) => {
+                    expect(comment).toMatchObject({
+                        body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                        votes: 0,
+                        author: "butter_bridge",
+                        article_id: 9,
+                        created_at: expect.any(String)
+                    });
+                });
+        });
+        test("PATCH - 200: rounds inc_votes down to nearest integer if given a float", () => {
+            return request(app)
+                .patch("/api/comments/1")
+                .send({ inc_votes: 1.9 })
+                .expect(200)
+                .then(({ body: { comment } }) => {
+                    expect(comment).toMatchObject({
+                        body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                        votes: 17,
+                        author: "butter_bridge",
+                        article_id: 9,
+                        created_at: expect.any(String)
+                    });
+                });
+        });
+        test("PATCH - 400: returns error when passed obj doesn't have an inc_votes property", () => {
+            return request(app)
+                .patch("/api/comments/1")
+                .send({ hello: "goodbye" })
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("PATCH request body is incomplete");
+                });
+        });
+        test("PATCH - 400: returns error when inc_votes === NaN", () => {
+            return request(app)
+                .patch("/api/comments/1")
+                .send({ inc_votes: "goodbye" })
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("data type of increment is incorrect");
+                });
+        });
+        test("PATCH - 400: returns error when comment_id is invalid", () => {
+            return request(app)
+                .patch("/api/comments/highwayToTheDangerZone")
+                .send({ inc_votes: 234 })
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("invalid comment id");
+                });
+        });
+        test("PATCH - 404: returns error when comment_id not found", () => {
+            return request(app)
+                .patch("/api/comments/999999999")
+                .send({ inc_votes: 234 })
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("comment not found");
+                });
+        });
+    });
+    describe("DELETE requests", () => {
+        test("DELETE - 204: responds with no content when comment is successfully deleted", () => {
+            return request(app).delete("/api/comments/1").expect(204);
+        });
+        test("DELETE - 400: responds with error when comment_id is invalid", () => {
+            return request(app)
+                .delete("/api/comments/im-a-little-teapot")
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("invalid comment id");
+                });
+        });
+        test("DELETE - 404: responds with error when comment doesn't exist", () => {
+            return request(app)
+                .delete("/api/comments/9999999")
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("comment not found");
+                });
+        });
     });
 });
 
