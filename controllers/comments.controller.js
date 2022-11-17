@@ -19,7 +19,9 @@ exports.patchCommentById = (req, res, next) => {
         params: { comment_id },
         body
     } = req;
-    updateCommentById(comment_id, body).then((comment) => {
-        res.status(200).send({ comment });
-    });
+    updateCommentById(comment_id, body)
+        .then((comment) => {
+            res.status(200).send({ comment });
+        })
+        .catch(next);
 };

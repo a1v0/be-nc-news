@@ -601,9 +601,15 @@ describe("/api/comments/:comment_id", () => {
                     });
                 });
         });
-        test.todo(
-            "PATCH - 400: returns error when passed obj doesn't have an inc_votes property"
-        );
+        test("PATCH - 400: returns error when passed obj doesn't have an inc_votes property", () => {
+            return request(app)
+                .patch("/api/comments/1")
+                .send({ hello: "goodbye" })
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("PATCH request body is incomplete");
+                });
+        });
         test.todo("PATCH - 400: returns error when inc_votes === NaN");
         test.todo("PATCH - 400: returns error when comment_id is invalid");
         test.todo("PATCH - 404: returns error when comment_id not found");
