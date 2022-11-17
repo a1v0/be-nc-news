@@ -1,38 +1,84 @@
 const db = require("../db/connection.js");
 
 const { parseDateFieldWithMap } = require("../utils/utils.js");
+const { selectTopics } = require("./topics.model.js");
 
-exports.selectArticles = () => {
-    return db
-        .query(
-            `
+exports.selectArticles = ({
+    topic,
+    sort_by = "created_at",
+    order = "desc"
+}) => {
+    if (topic) topic = topic.toLowerCase();
+    sort_by = sort_by.toLowerCase();
+    order = order.toLowerCase();
+
+    const validSortQueries = [
+        "title",
+        "topic",
+        "author",
+        "article_id",
+        "created_at",
+        "votes",
+        "comment_count"
+    ];
+
+    const validOrderQueries = ["asc", "desc"];
+
+    if (
+        !validSortQueries.includes(sort_by) ||
+        !validOrderQueries.includes(order)
+    ) {
+        return Promise.reject({ status: 400, msg: "invalid querystring" });
+    }
+
+    return selectTopics()
+        .then((topics) => {
+            if (
+                topic &&
+                topics.findIndex((result) => {
+                    return result.slug === topic;
+                }) < 0
+            ) {
+                return Promise.reject({ status: 404, msg: "topic not found" });
+            }
+
+            let dbQuery = `
                 SELECT
-                    articles.author,
                     title,
-                    articles.article_id,
                     topic,
+                    articles.author,
+                    articles.article_id,
                     articles.created_at,
                     articles.votes,
                     CAST (COUNT(comments.article_id) AS INT)
                         AS comment_count
                 FROM articles
                 LEFT OUTER JOIN comments
-                ON articles.article_id = comments.article_id
+                ON articles.article_id = comments.article_id `;
+            const injectionValues = [];
+
+            if (topic) {
+                injectionValues.push(topic);
+                dbQuery += `WHERE topic = $1 `;
+            }
+
+            dbQuery += `
                 GROUP BY
-                    articles.author,
-                    articles.title,
-                    articles.created_at,
+                    title,
                     topic,
+                    articles.author,
+                    articles.created_at,
                     articles.article_id
-                ORDER BY created_at DESC;
-            `
-        )
+                ORDER BY articles.${sort_by} ${order};
+            `;
+            return db.query(dbQuery, injectionValues);
+        })
         .then((response) => {
             return parseDateFieldWithMap(response.rows);
         });
 };
 
-exports.selectArticleById = (id, next) => {
+exports.selectArticleById = (id) => {
     return db
         .query(
             `
