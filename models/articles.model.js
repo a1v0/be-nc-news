@@ -1,6 +1,7 @@
 const db = require("../db/connection.js");
 
 const { parseDateFieldWithMap } = require("../utils/utils.js");
+const { selectTopics } = require("./topics.model.js");
 
 exports.selectArticles = ({
     topic,
@@ -30,43 +31,50 @@ exports.selectArticles = ({
         return Promise.reject({ status: 400, msg: "invalid querystring" });
     }
 
-    let dbQuery = `
-        SELECT
-            title,
-            topic,
-            articles.author,
-            articles.article_id,
-            articles.created_at,
-            articles.votes,
-            CAST (COUNT(comments.article_id) AS INT)
-                AS comment_count
-        FROM articles
-        LEFT OUTER JOIN comments
-        ON articles.article_id = comments.article_id `;
-    const injectionValues = [];
+    return selectTopics()
+        .then((topics) => {
+            if (
+                topic &&
+                topics.findIndex((result) => {
+                    return result.slug === topic;
+                }) < 0
+            ) {
+                return Promise.reject({ status: 404, msg: "topic not found" });
+            }
 
-    if (topic) {
-        injectionValues.push(topic);
-        dbQuery += `WHERE topic = $1 `;
-    }
+            let dbQuery = `
+                SELECT
+                    title,
+                    topic,
+                    articles.author,
+                    articles.article_id,
+                    articles.created_at,
+                    articles.votes,
+                    CAST (COUNT(comments.article_id) AS INT)
+                        AS comment_count
+                FROM articles
+                LEFT OUTER JOIN comments
+                ON articles.article_id = comments.article_id `;
+            const injectionValues = [];
 
-    dbQuery += `
-        GROUP BY
-            title,
-            topic,
-            articles.author,
-            articles.created_at,
-            articles.article_id
-        ORDER BY articles.${sort_by} ${order};
-        `;
-    return db
-        .query(dbQuery, injectionValues)
+            if (topic) {
+                injectionValues.push(topic);
+                dbQuery += `WHERE topic = $1 `;
+            }
+
+            dbQuery += `
+                GROUP BY
+                    title,
+                    topic,
+                    articles.author,
+                    articles.created_at,
+                    articles.article_id
+                ORDER BY articles.${sort_by} ${order};
+            `;
+            return db.query(dbQuery, injectionValues);
+        })
         .then((response) => {
             return parseDateFieldWithMap(response.rows);
-        })
-        .catch((err) => {
-            console.log(err);
-            return err;
         });
 };
 
