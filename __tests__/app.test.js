@@ -89,7 +89,7 @@ describe("/api/articles", () => {
                     });
                 });
         });
-        test.skip("GET - 200: valid sort_by query sorts by given column (and defaults to date)", () => {
+        test("GET - 200: valid sort_by query sorts by given column (and defaults to date)", () => {
             return request(app)
                 .get("/api/articles?sort_by=title")
                 .expect(200)
@@ -438,17 +438,6 @@ describe("/api/articles/:article_id/comments", () => {
     });
 });
 
-describe("misc error handling", () => {
-    test("ANY REQUEST - 404: respond with 404 error when path not found", () => {
-        return request(app)
-            .get("/api/not-a-valid-path")
-            .expect(404)
-            .then(({ body: { msg } }) => {
-                expect(msg).toBe("not found");
-            });
-    });
-});
-
 describe("/api/users", () => {
     test("GET - 200: return array of objects with user_id, username, name and avatar_url properties", () => {
         return request(app)
@@ -463,6 +452,17 @@ describe("/api/users", () => {
                         avatar_url: expect.any(String)
                     });
                 });
+            });
+    });
+});
+
+describe("misc error handling", () => {
+    test("ANY REQUEST - 404: respond with 404 error when path not found", () => {
+        return request(app)
+            .get("/api/not-a-valid-path")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("not found");
             });
     });
 });

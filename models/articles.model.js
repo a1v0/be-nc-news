@@ -2,7 +2,15 @@ const db = require("../db/connection.js");
 
 const { parseDateFieldWithMap } = require("../utils/utils.js");
 
-exports.selectArticles = ({ topic, sort_by }) => {
+exports.selectArticles = ({ topic, sort_by = "created_at" }) => {
+    const validSortQueries = [
+        "title",
+        "topic",
+        "author",
+        "created_at",
+        "article_id"
+    ];
+
     let dbQuery = `
         SELECT
             title,
@@ -30,18 +38,10 @@ exports.selectArticles = ({ topic, sort_by }) => {
             articles.author,
             articles.created_at,
             articles.article_id
+        ORDER BY articles.${sort_by} DESC;
         `;
 
-    if (sort_by) {
-        injectionValues.push(sort_by);
-        dbQuery += `ORDER BY $1 DESC;`;
-        console.log(dbQuery);
-    } else {
-        dbQuery += `ORDER BY created_at DESC;`;
-    }
-
     return db.query(dbQuery, injectionValues).then((response) => {
-        console.log(response.rows);
         return parseDateFieldWithMap(response.rows);
     });
 };
