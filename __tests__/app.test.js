@@ -619,7 +619,15 @@ describe("/api/comments/:comment_id", () => {
                     expect(msg).toBe("data type of increment is incorrect");
                 });
         });
-        test.todo("PATCH - 400: returns error when comment_id is invalid");
+        test("PATCH - 400: returns error when comment_id is invalid", () => {
+            return request(app)
+                .patch("/api/comments/highwayToTheDangerZone")
+                .send({ inc_votes: 234 })
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("invalid comment id");
+                });
+        });
         test.todo("PATCH - 404: returns error when comment_id not found");
     });
     describe("DELETE requests", () => {

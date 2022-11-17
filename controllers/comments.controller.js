@@ -23,5 +23,8 @@ exports.patchCommentById = (req, res, next) => {
         .then((comment) => {
             res.status(200).send({ comment });
         })
-        .catch(next);
+        .catch((err) => {
+            err.invalidProperty = "comment id";
+            next(err);
+        });
 };
