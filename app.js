@@ -12,6 +12,7 @@ const {
     psqlErrorHandler
 } = require("./errors/error-handler.js");
 const articlesRouter = require("./routes/articles.route.js");
+const commentsRouter = require("./routes/comments.route.js");
 const topicsRouter = require("./routes/topics.route.js");
 
 app.use(express.json());
@@ -24,7 +25,7 @@ app.use("/api/articles", articlesRouter);
 
 app.get("/api/users", getUsers);
 
-app.delete("/api/comments/:comment_id", deleteCommentById);
+app.use("/api/comments", commentsRouter);
 
 app.all("/*", (req, res, next) => {
     next({ status: 404, msg: "not found" });
