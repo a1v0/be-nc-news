@@ -492,7 +492,7 @@ describe("/api/users/:username", () => {
                 });
             });
     });
-    test.skip("GET - 404: return error when username does not exist", () => {
+    test("GET - 404: return error when username does not exist", () => {
         return request(app)
             .get("/api/users/rru3947r9348rfiuoe")
             .expect(404)

@@ -16,6 +16,12 @@ exports.selectUserByUsername = (username) => {
             [username]
         )
         .then((response) => {
+            if (!response.rows.length) {
+                return Promise.reject({
+                    status: 404,
+                    msg: "username not found"
+                });
+            }
             return response.rows[0];
         });
 };
