@@ -628,7 +628,15 @@ describe("/api/comments/:comment_id", () => {
                     expect(msg).toBe("invalid comment id");
                 });
         });
-        test.todo("PATCH - 404: returns error when comment_id not found");
+        test("PATCH - 404: returns error when comment_id not found", () => {
+            return request(app)
+                .patch("/api/comments/999999999")
+                .send({ inc_votes: 234 })
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("comment not found");
+                });
+        });
     });
     describe("DELETE requests", () => {
         test("DELETE - 204: responds with no content when comment is successfully deleted", () => {
