@@ -22,15 +22,23 @@ exports.deleteFromCommentsByCommentId = (id) => {
 
 exports.updateCommentById = (id, { inc_votes }) => {
     return db
-        .query(
-            `
-            UPDATE comments
-            SET votes = votes + $1
-            WHERE comment_id = $2
-            RETURNING * ;
-        `,
-            [inc_votes, id]
-        )
+        .query(`SELECT votes FROM comments WHERE comment_id = $1`, [id])
+        .then((response) => {
+            const newVoteCount =
+                response.rows[0].votes + inc_votes < 0
+                    ? 0
+                    : response.rows[0].votes + inc_votes;
+            return db.query(
+                `
+                    UPDATE comments
+                    SET votes = $1
+                    WHERE comment_id = $2
+                    RETURNING * ;
+                `,
+                [newVoteCount, id]
+            );
+        })
+
         .then((response) => {
             return response.rows[0];
         });
