@@ -11,7 +11,6 @@ const {
     deleteCommentById,
     getEndpoints
 } = require("./controllers/articles.controller.js");
-const { getTopics } = require("./controllers/topics.controller.js");
 const {
     customErrorHandler,
     lastResort500Error,
@@ -20,9 +19,10 @@ const {
 
 app.use(express.json());
 
-app.get("/api", getEndpoints);
+const topicsRouter = require("./routes/topics.route.js");
+app.use("/api/topics", topicsRouter);
 
-app.get("/api/topics", getTopics);
+app.get("/api", getEndpoints);
 
 app.get("/api/articles", getArticles);
 
