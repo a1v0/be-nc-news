@@ -552,9 +552,25 @@ describe("/api/comments/:comment_id", () => {
                     });
                 });
         });
-        test.todo(
-            "PATCH - 200: returns as normal, ignoring superfluous properties"
-        );
+        test("PATCH - 200: returns as normal, ignoring superfluous properties", () => {
+            return request(app)
+                .patch("/api/comments/1")
+                .send({
+                    inc_votes: 1,
+                    imDreamingOfA: "white Christmas",
+                    hank: "Scorpio"
+                })
+                .expect(200)
+                .then(({ body: { comment } }) => {
+                    expect(comment).toMatchObject({
+                        body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                        votes: 17,
+                        author: "butter_bridge",
+                        article_id: 9,
+                        created_at: expect.any(String)
+                    });
+                });
+        });
         test.todo(
             "PATCH - 200: sets votes property to 0 if passed object makes it negative"
         );
