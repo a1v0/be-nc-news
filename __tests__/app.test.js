@@ -610,7 +610,15 @@ describe("/api/comments/:comment_id", () => {
                     expect(msg).toBe("PATCH request body is incomplete");
                 });
         });
-        test.todo("PATCH - 400: returns error when inc_votes === NaN");
+        test("PATCH - 400: returns error when inc_votes === NaN", () => {
+            return request(app)
+                .patch("/api/comments/1")
+                .send({ inc_votes: "goodbye" })
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("data type of increment is incorrect");
+                });
+        });
         test.todo("PATCH - 400: returns error when comment_id is invalid");
         test.todo("PATCH - 404: returns error when comment_id not found");
     });

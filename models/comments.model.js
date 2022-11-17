@@ -27,6 +27,12 @@ exports.updateCommentById = (id, { inc_votes }) => {
             msg: "PATCH request body is incomplete"
         });
     }
+    if (isNaN(inc_votes)) {
+        return Promise.reject({
+            status: 400,
+            msg: "data type of increment is incorrect"
+        });
+    }
 
     inc_votes = Math.floor(inc_votes);
     return db
