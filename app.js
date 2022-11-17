@@ -8,7 +8,8 @@ const {
     getCommentsByArticleId,
     postCommentByArticleId,
     getUsers,
-    deleteCommentById
+    deleteCommentById,
+    getEndpoints
 } = require("./controllers/articles.controller.js");
 const { getTopics } = require("./controllers/topics.controller.js");
 const {
@@ -18,6 +19,8 @@ const {
 } = require("./errors/error-handler.js");
 
 app.use(express.json());
+
+app.get("/api", getEndpoints);
 
 app.get("/api/topics", getTopics);
 

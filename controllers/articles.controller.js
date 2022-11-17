@@ -7,6 +7,7 @@ const {
     selectUsers,
     deleteFromCommentsByCommentId
 } = require("../models/articles.model.js");
+const endpointsJSON = require("../endpoints.json");
 
 exports.getArticles = (req, res, next) => {
     return selectArticles(req.query)
@@ -94,4 +95,8 @@ exports.deleteCommentById = (req, res, next) => {
             err.invalidProperty = "comment id";
             next(err);
         });
+};
+
+exports.getEndpoints = (req, res) => {
+    res.status(200).json({ endpoints: endpointsJSON });
 };
