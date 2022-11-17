@@ -478,15 +478,11 @@ describe("/api/users", () => {
     });
 });
 
-describe("misc error handling", () => {
-    test("ANY REQUEST - 404: respond with 404 error when path not found", () => {
-        return request(app)
-            .get("/api/not-a-valid-path")
-            .expect(404)
-            .then(({ body: { msg } }) => {
-                expect(msg).toBe("not found");
-            });
-    });
+describe("/api/users/:username", () => {
+    test.todo(
+        "GET - 200: return user with username, name and avatar_url properties"
+    );
+    test.todo("GET - 404: return error when username does not exist");
 });
 
 describe("/api/comments/:comment_id", () => {
@@ -525,6 +521,17 @@ describe("/api", () => {
                         "description"
                     );
                 });
+            });
+    });
+});
+
+describe("misc error handling", () => {
+    test("ANY REQUEST - 404: respond with 404 error when path not found", () => {
+        return request(app)
+            .get("/api/not-a-valid-path")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("not found");
             });
     });
 });
