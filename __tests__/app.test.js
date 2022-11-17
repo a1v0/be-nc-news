@@ -501,7 +501,7 @@ describe("/api/comments/:comment_id", () => {
                 expect(msg).toBe("invalid comment id");
             });
     });
-    test.skip("DELETE - 404: responds with error when comment doesn't exist", () => {
+    test("DELETE - 404: responds with error when comment doesn't exist", () => {
         return request(app)
             .delete("/api/comments/9999999")
             .expect(404)
