@@ -22,6 +22,7 @@ exports.getArticleById = (req, res, next) => {
             res.status(200).send({ article });
         })
         .catch((err) => {
+            err.invalidProperty = "article id";
             next(err);
         });
 };
@@ -36,6 +37,7 @@ exports.patchArticleById = (req, res, next) => {
             res.status(200).send({ article });
         })
         .catch((err) => {
+            err.invalidProperty = "article id";
             next(err);
         });
 };
@@ -50,6 +52,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
             res.status(200).send({ comments });
         })
         .catch((err) => {
+            err.invalidProperty = "article id";
             next(err);
         });
 };
@@ -70,6 +73,7 @@ exports.postCommentByArticleId = (req, res, next) => {
                     msg: "POST request body is incomplete"
                 });
             } else {
+                err.invalidProperty = "article id";
                 next(err);
             }
         });
@@ -82,7 +86,12 @@ exports.getUsers = (req, res) => {
 };
 
 exports.deleteCommentById = (req, res, next) => {
-    deleteFromCommentsByCommentId(req.params.comment_id).then(() => {
-        res.sendStatus(204);
-    });
+    deleteFromCommentsByCommentId(req.params.comment_id)
+        .then(() => {
+            res.sendStatus(204);
+        })
+        .catch((err) => {
+            err.invalidProperty = "comment id";
+            next(err);
+        });
 };

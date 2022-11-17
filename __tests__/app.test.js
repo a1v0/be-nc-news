@@ -493,7 +493,7 @@ describe("/api/comments/:comment_id", () => {
     test("DELETE - 204: responds with no content when comment is successfully deleted", () => {
         return request(app).delete("/api/comments/1").expect(204);
     });
-    test.skip("DELETE - 400: responds with error when comment_id is invalid", () => {
+    test("DELETE - 400: responds with error when comment_id is invalid", () => {
         return request(app)
             .delete("/api/comments/im-a-little-teapot")
             .expect(400)
