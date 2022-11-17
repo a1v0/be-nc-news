@@ -1,4 +1,7 @@
-const { deleteFromCommentsByCommentId } = require("../models/comments.model");
+const {
+    deleteFromCommentsByCommentId,
+    updateCommentById
+} = require("../models/comments.model");
 
 exports.deleteCommentById = (req, res, next) => {
     deleteFromCommentsByCommentId(req.params.comment_id)
@@ -9,4 +12,14 @@ exports.deleteCommentById = (req, res, next) => {
             err.invalidProperty = "comment id";
             next(err);
         });
+};
+
+exports.patchCommentById = (req, res, next) => {
+    const {
+        params: { comment_id },
+        body
+    } = req;
+    updateCommentById(comment_id, body).then((comment) => {
+        res.status(200).send({ comment });
+    });
 };

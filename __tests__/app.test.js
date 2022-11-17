@@ -522,9 +522,36 @@ describe("/api/users/:username", () => {
 
 describe("/api/comments/:comment_id", () => {
     describe("PATCH requests", () => {
-        test.todo(
-            "PATCH - 200: returns updated comment when passed an object with a inc_votes property"
-        );
+        test("PATCH - 200: returns updated comment when passed an object with a inc_votes property", () => {
+            return request(app)
+                .patch("/api/comments/1")
+                .send({ inc_votes: 1 })
+                .expect(200)
+                .then(({ body: { comment } }) => {
+                    expect(comment).toMatchObject({
+                        body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                        votes: 17,
+                        author: "butter_bridge",
+                        article_id: 9,
+                        created_at: expect.any(String)
+                    });
+                })
+                .then(() => {
+                    return request(app)
+                        .patch("/api/comments/2")
+                        .send({ inc_votes: -1 })
+                        .expect(200);
+                })
+                .then(({ body: { comment } }) => {
+                    expect(comment).toMatchObject({
+                        body: "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+                        votes: 13,
+                        author: "butter_bridge",
+                        article_id: 1,
+                        created_at: expect.any(String)
+                    });
+                });
+        });
         test.todo(
             "PATCH - 200: returns as normal, ignoring superfluous properties"
         );
