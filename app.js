@@ -32,7 +32,7 @@ app.route("/api/articles/:article_id")
 
 app.route("/api/articles/:article_id/comments")
     .get(getCommentsByArticleId)
-    .post(postCommentsByArticleId);
+    .post(postCommentByArticleId);
 
 app.get("/api/users", getUsers);
 
