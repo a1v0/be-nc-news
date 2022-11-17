@@ -479,10 +479,27 @@ describe("/api/users", () => {
 });
 
 describe("/api/users/:username", () => {
-    test.todo(
-        "GET - 200: return user with username, name and avatar_url properties"
-    );
-    test.todo("GET - 404: return error when username does not exist");
+    test.skip("GET - 200: return user with username, name and avatar_url properties", () => {
+        return request(app)
+            .get("/api/users/icellusedkars")
+            .expect(200)
+            .then(({ body: { user } }) => {
+                expect(user).toMatchObject({
+                    username: "icellusedkars",
+                    name: "sam",
+                    avatar_url:
+                        "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+                });
+            });
+    });
+    test.skip("GET - 404: return error when username does not exist", () => {
+        return request(app)
+            .get("/api/users/rru3947r9348rfiuoe")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("username not found");
+            });
+    });
 });
 
 describe("/api/comments/:comment_id", () => {
