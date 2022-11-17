@@ -478,13 +478,26 @@ describe("/api/users", () => {
     });
 });
 
-describe("misc error handling", () => {
-    test("ANY REQUEST - 404: respond with 404 error when path not found", () => {
+describe("/api/users/:username", () => {
+    test("GET - 200: return user with username, name and avatar_url properties", () => {
         return request(app)
-            .get("/api/not-a-valid-path")
+            .get("/api/users/icellusedkars")
+            .expect(200)
+            .then(({ body: { user } }) => {
+                expect(user).toMatchObject({
+                    username: "icellusedkars",
+                    name: "sam",
+                    avatar_url:
+                        "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+                });
+            });
+    });
+    test("GET - 404: return error when username does not exist", () => {
+        return request(app)
+            .get("/api/users/rru3947r9348rfiuoe")
             .expect(404)
             .then(({ body: { msg } }) => {
-                expect(msg).toBe("not found");
+                expect(msg).toBe("username not found");
             });
     });
 });
@@ -525,6 +538,17 @@ describe("/api", () => {
                         "description"
                     );
                 });
+            });
+    });
+});
+
+describe("misc error handling", () => {
+    test("ANY REQUEST - 404: respond with 404 error when path not found", () => {
+        return request(app)
+            .get("/api/not-a-valid-path")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+                expect(msg).toBe("not found");
             });
     });
 });
