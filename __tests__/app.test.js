@@ -196,14 +196,70 @@ describe("/api/articles", () => {
         });
     });
     describe("POST requests", () => {
-        test.todo(
-            "POST - 201: returns created object with author, title, body, topic, article_id, votes, created_at and comment_count properties"
-        );
-        test.todo("POST - 201: ignores superfluous properties");
-        test.todo(
-            "POST - 400: error when body is missing one of the necessary properties"
-        );
-        test.todo("POST - 404: error when username does not exist");
+        test.skip("POST - 201: returns created object with author, title, body, topic, article_id, votes, created_at and comment_count properties", () => {
+            return request(app)
+                .post("/api/articles")
+                .send({
+                    author: "butter_bridge",
+                    title: "Doctors HATE her",
+                    body: "A lady from Wolverhampton has found a way to CHEAT DEATH. Find out how after watching an endless series of pointless advertisements.",
+                    topic: "mitch"
+                })
+                .expect(201)
+                .then(({ body: { article } }) => {
+                    expect(article).toMatchObject({
+                        author: "butter_bridge",
+                        title: "Doctors HATE her",
+                        body: "A lady from Wolverhampton has found a way to CHEAT DEATH. Find out how after watching an endless series of pointless advertisements.",
+                        topic: "mitch",
+                        article_id: expect.any(Number),
+                        votes: 0,
+                        created_at: expect.any(String),
+                        comment_count: 0
+                    });
+                });
+        });
+        test.skip("POST - 201: ignores superfluous properties", () => {
+            return request(app)
+                .post("/api/articles")
+                .send({
+                    author: "butter_bridge",
+                    title: "Doctors HATE her",
+                    body: "A lady from Wolverhampton has found a way to CHEAT DEATH. Find out how after watching an endless series of pointless advertisements.",
+                    topic: "mitch",
+                    alasPoorYorrick: "I knew him well"
+                })
+                .expect(201)
+                .then(({ body: { article } }) => {
+                    expect(article).not.toHaveProperty("alasPoorYorrick");
+                });
+        });
+        test.skip("POST - 400: error when body is missing one of the necessary properties", () => {
+            return request(app)
+                .post("/api/articles")
+                .send({
+                    alasPoorYorrick: "I knew him well"
+                })
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("POST request body is incomplete");
+                });
+        });
+        test.skip("POST - 404: error when username does not exist", () => {
+            return request(app)
+                .post("/api/articles")
+                .send({
+                    author: "somethingStupid",
+                    title: "Doctors HATE her",
+                    body: "A lady from Wolverhampton has found a way to CHEAT DEATH. Find out how after watching an endless series of pointless advertisements.",
+                    topic: "mitch",
+                    alasPoorYorrick: "I knew him well"
+                })
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("username not found");
+                });
+        });
     });
 });
 
