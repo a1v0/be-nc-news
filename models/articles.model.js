@@ -176,29 +176,3 @@ exports.updateArticleById = (id, inc_votes, article) => {
             return response.rows[0];
         });
 };
-
-exports.selectUsers = () => {
-    return db.query(`SELECT * FROM users;`).then((response) => {
-        return response.rows;
-    });
-};
-
-exports.deleteFromCommentsByCommentId = (id) => {
-    return db
-        .query(
-            `
-            DELETE FROM comments
-            WHERE comment_id = $1
-            RETURNING * ;
-        `,
-            [id]
-        )
-        .then((response) => {
-            if (!response.rows.length) {
-                return Promise.reject({
-                    status: 404,
-                    msg: "comment not found"
-                });
-            }
-        });
-};
