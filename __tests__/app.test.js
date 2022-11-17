@@ -56,142 +56,154 @@ describe("/api/topics", () => {
 });
 
 describe("/api/articles", () => {
-    test("GET - 200: return array of articles with following properties: author, title, article_id, topic, created_at, votes, comment_count", () => {
-        return request(app)
-            .get("/api/articles")
-            .expect(200)
-            .then(({ body: { articles } }) => {
-                expect(articles.length).toBe(12);
-                articles.forEach((article) => {
-                    expect(article).toEqual({
-                        author: expect.any(String),
-                        title: expect.any(String),
-                        article_id: expect.any(Number),
-                        topic: expect.any(String),
-                        created_at: expect.any(Number),
-                        votes: expect.any(Number),
-                        comment_count: expect.any(Number)
-                    });
-                });
-            });
-    });
-    test("GET - 200: results should be sorted in descending date order", () => {
-        return request(app)
-            .get("/api/articles")
-            .expect(200)
-            .then(({ body: { articles } }) => {
-                expect(articles).toBeSortedBy("created_at", {
-                    descending: true
-                });
-            });
-    });
-    test("GET - 200: results contain correct comment_count value", () => {
-        return request(app)
-            .get("/api/articles")
-            .expect(200)
-            .then(({ body: { articles } }) => {
-                expect(articles[0].comment_count).toBe(2);
-                expect(articles[1].comment_count).toBe(1);
-                expect(articles[2].comment_count).toBe(0);
-            });
-    });
-    describe("GET requests with querystrings", () => {
-        test("GET - 200: valid topic query returns results only from that topic", () => {
+    describe("GET requests", () => {
+        test("GET - 200: return array of articles with following properties: author, title, article_id, topic, created_at, votes, comment_count", () => {
             return request(app)
-                .get("/api/articles?topic=mitch")
+                .get("/api/articles")
                 .expect(200)
                 .then(({ body: { articles } }) => {
-                    expect(articles.length).toBe(11);
+                    expect(articles.length).toBe(12);
                     articles.forEach((article) => {
-                        expect(article.topic).toBe("mitch");
+                        expect(article).toEqual({
+                            author: expect.any(String),
+                            title: expect.any(String),
+                            article_id: expect.any(Number),
+                            topic: expect.any(String),
+                            created_at: expect.any(Number),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(Number)
+                        });
                     });
                 });
         });
-        test("GET - 200: valid topic query for empty topic returns empty array", () => {
+        test("GET - 200: results should be sorted in descending date order", () => {
             return request(app)
-                .get("/api/articles?topic=paper")
+                .get("/api/articles")
                 .expect(200)
                 .then(({ body: { articles } }) => {
-                    expect(articles.length).toBe(0);
-                    articles.forEach((article) => {
-                        expect(article.topic).toBe("paper");
-                    });
-                });
-        });
-        test("GET - 200: valid sort_by query sorts by given column (and defaults to date)", () => {
-            return request(app)
-                .get("/api/articles?sort_by=title")
-                .expect(200)
-                .then(({ body: { articles } }) => {
-                    expect(articles).toBeSortedBy("title", {
+                    expect(articles).toBeSortedBy("created_at", {
                         descending: true
                     });
+                });
+        });
+        test("GET - 200: results contain correct comment_count value", () => {
+            return request(app)
+                .get("/api/articles")
+                .expect(200)
+                .then(({ body: { articles } }) => {
+                    expect(articles[0].comment_count).toBe(2);
+                    expect(articles[1].comment_count).toBe(1);
+                    expect(articles[2].comment_count).toBe(0);
+                });
+        });
+        describe("GET requests with querystrings", () => {
+            test("GET - 200: valid topic query returns results only from that topic", () => {
+                return request(app)
+                    .get("/api/articles?topic=mitch")
+                    .expect(200)
+                    .then(({ body: { articles } }) => {
+                        expect(articles.length).toBe(11);
+                        articles.forEach((article) => {
+                            expect(article.topic).toBe("mitch");
+                        });
+                    });
+            });
+            test("GET - 200: valid topic query for empty topic returns empty array", () => {
+                return request(app)
+                    .get("/api/articles?topic=paper")
+                    .expect(200)
+                    .then(({ body: { articles } }) => {
+                        expect(articles.length).toBe(0);
+                        articles.forEach((article) => {
+                            expect(article.topic).toBe("paper");
+                        });
+                    });
+            });
+            test("GET - 200: valid sort_by query sorts by given column (and defaults to date)", () => {
+                return request(app)
+                    .get("/api/articles?sort_by=title")
+                    .expect(200)
+                    .then(({ body: { articles } }) => {
+                        expect(articles).toBeSortedBy("title", {
+                            descending: true
+                        });
 
-                    return request(app)
-                        .get("/api/articles?sort_by=created_at")
-                        .expect(200);
-                })
-                .then(({ body: { articles } }) => {
-                    expect(articles).toBeSortedBy("created_at", {
-                        descending: true
+                        return request(app)
+                            .get("/api/articles?sort_by=created_at")
+                            .expect(200);
+                    })
+                    .then(({ body: { articles } }) => {
+                        expect(articles).toBeSortedBy("created_at", {
+                            descending: true
+                        });
+                        return request(app)
+                            .get("/api/articles?sort_by=votes")
+                            .expect(200);
+                    })
+                    .then(({ body: { articles } }) => {
+                        expect(articles).toBeSortedBy("votes", {
+                            descending: true
+                        });
                     });
-                    return request(app)
-                        .get("/api/articles?sort_by=votes")
-                        .expect(200);
-                })
-                .then(({ body: { articles } }) => {
-                    expect(articles).toBeSortedBy("votes", {
-                        descending: true
+            });
+            test("GET - 200: valid order query sets sorting order (defaults to descending)", () => {
+                return request(app)
+                    .get("/api/articles?order=asc")
+                    .expect(200)
+                    .then(({ body: { articles } }) => {
+                        expect(articles).toBeSortedBy("created_at", {
+                            descending: false
+                        });
                     });
-                });
-        });
-        test("GET - 200: valid order query sets sorting order (defaults to descending)", () => {
-            return request(app)
-                .get("/api/articles?order=asc")
-                .expect(200)
-                .then(({ body: { articles } }) => {
-                    expect(articles).toBeSortedBy("created_at", {
-                        descending: false
+            });
+            test("GET - 200: valid combination of all three queries works as desired, and uppercase is ignored", () => {
+                return request(app)
+                    .get("/api/articles?sort_by=AUTHOR&order=ASC&topic=MITCH")
+                    .expect(200)
+                    .then(({ body: { articles } }) => {
+                        expect(articles.length).toBe(11);
+                        expect(articles).toBeSortedBy("author", {
+                            descending: false
+                        });
                     });
-                });
-        });
-        test("GET - 200: valid combination of all three queries works as desired, and uppercase is ignored", () => {
-            return request(app)
-                .get("/api/articles?sort_by=AUTHOR&order=ASC&topic=MITCH")
-                .expect(200)
-                .then(({ body: { articles } }) => {
-                    expect(articles.length).toBe(11);
-                    expect(articles).toBeSortedBy("author", {
-                        descending: false
+            });
+            test("GET - 400: invalid order query returns error", () => {
+                return request(app)
+                    .get("/api/articles?order=gobbledigook")
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                        expect(msg).toBe("invalid querystring");
                     });
-                });
+            });
+            test("GET - 400: invalid sort_by query returns error", () => {
+                return request(app)
+                    .get("/api/articles?sort_by=gobbledigook")
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                        expect(msg).toBe("invalid querystring");
+                    });
+            });
+            test("GET - 404: invalid topic query returns error", () => {
+                return request(app)
+                    .get(
+                        "/api/articles?topic=Beethoven'sSeventhSymphonyIsTheBestOne"
+                    )
+                    .expect(404)
+                    .then(({ body: { msg } }) => {
+                        expect(msg).toBe("topic not found");
+                    });
+            });
         });
-        test("GET - 400: invalid order query returns error", () => {
-            return request(app)
-                .get("/api/articles?order=gobbledigook")
-                .expect(400)
-                .then(({ body: { msg } }) => {
-                    expect(msg).toBe("invalid querystring");
-                });
-        });
-        test("GET - 400: invalid sort_by query returns error", () => {
-            return request(app)
-                .get("/api/articles?sort_by=gobbledigook")
-                .expect(400)
-                .then(({ body: { msg } }) => {
-                    expect(msg).toBe("invalid querystring");
-                });
-        });
-        test("GET - 404: invalid topic query returns error", () => {
-            return request(app)
-                .get(
-                    "/api/articles?topic=Beethoven'sSeventhSymphonyIsTheBestOne"
-                )
-                .expect(404)
-                .then(({ body: { msg } }) => {
-                    expect(msg).toBe("topic not found");
-                });
-        });
+    });
+    describe("POST requests", () => {
+        test.todo(
+            "POST - 201: returns created object with author, title, body, topic, article_id, votes, created_at and comment_count properties"
+        );
+        test.todo("POST - 201: ignores superfluous properties");
+        test.todo(
+            "POST - 400: error when body is missing one of the necessary properties"
+        );
+        test.todo("POST - 404: error when username does not exist");
     });
 });
 
