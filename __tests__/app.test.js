@@ -18,6 +18,24 @@ afterAll(() => {
     return db.end();
 });
 
+describe("/api", () => {
+    test("GET - 200: returns JSON data retrieved from endpoints.json", () => {
+        return request(app)
+            .get("/api")
+            .expect(200)
+            .then(({ body: { endpoints } }) => {
+                // This isn't a perfect expect statement, but all I can know for sure is that, when the test runs, there will be at least 9 endpoints
+                const endpointKeys = Object.keys(endpoints);
+                expect(endpointKeys.length).toBeGreaterThan(8);
+                endpointKeys.forEach((endpointKey) => {
+                    expect(endpoints[endpointKey]).toHaveProperty(
+                        "description"
+                    );
+                });
+            });
+    });
+});
+
 describe("/api/topics", () => {
     test("GET - 200: respond with array of topic objects, each having only 'slug' and 'description' properties", () => {
         return request(app)
@@ -520,24 +538,6 @@ describe("/api/comments/:comment_id", () => {
             .expect(404)
             .then(({ body: { msg } }) => {
                 expect(msg).toBe("comment not found");
-            });
-    });
-});
-
-describe("/api", () => {
-    test("GET - 200: returns JSON data retrieved from endpoints.json", () => {
-        return request(app)
-            .get("/api")
-            .expect(200)
-            .then(({ body: { endpoints } }) => {
-                // This isn't a perfect expect statement, but all I can know for sure is that, when the test runs, there will be at least 9 endpoints
-                const endpointKeys = Object.keys(endpoints);
-                expect(endpointKeys.length).toBeGreaterThan(8);
-                endpointKeys.forEach((endpointKey) => {
-                    expect(endpoints[endpointKey]).toHaveProperty(
-                        "description"
-                    );
-                });
             });
     });
 });
