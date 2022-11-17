@@ -21,6 +21,7 @@ exports.deleteFromCommentsByCommentId = (id) => {
 };
 
 exports.updateCommentById = (id, { inc_votes }) => {
+    inc_votes = Math.floor(inc_votes);
     return db
         .query(`SELECT votes FROM comments WHERE comment_id = $1`, [id])
         .then((response) => {

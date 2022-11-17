@@ -574,9 +574,7 @@ describe("/api/comments/:comment_id", () => {
         test("PATCH - 200: sets votes property to 0 if passed object makes it negative", () => {
             return request(app)
                 .patch("/api/comments/1")
-                .send({
-                    inc_votes: -1000
-                })
+                .send({ inc_votes: -1000 })
                 .expect(200)
                 .then(({ body: { comment } }) => {
                     expect(comment).toMatchObject({
@@ -588,9 +586,21 @@ describe("/api/comments/:comment_id", () => {
                     });
                 });
         });
-        test.todo(
-            "PATCH - 200: rounds inc_votes down to nearest integer if given a float"
-        );
+        test("PATCH - 200: rounds inc_votes down to nearest integer if given a float", () => {
+            return request(app)
+                .patch("/api/comments/1")
+                .send({ inc_votes: 1.9 })
+                .expect(200)
+                .then(({ body: { comment } }) => {
+                    expect(comment).toMatchObject({
+                        body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                        votes: 17,
+                        author: "butter_bridge",
+                        article_id: 9,
+                        created_at: expect.any(String)
+                    });
+                });
+        });
         test.todo(
             "PATCH - 400: returns error when passed obj doesn't have an inc_votes property"
         );
