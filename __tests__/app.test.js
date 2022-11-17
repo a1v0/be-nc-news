@@ -116,7 +116,7 @@ describe("/api/articles", () => {
                     });
                 });
         });
-        test.skip("GET - 200: valid order query sets sorting order (defaults to descending)", () => {
+        test("GET - 200: valid order query sets sorting order (defaults to descending)", () => {
             return request(app)
                 .get("/api/articles?order=asc")
                 .expect(200)
@@ -126,9 +126,9 @@ describe("/api/articles", () => {
                     });
                 });
         });
-        test.skip("GET - 200: valid combination of all three queries works as desired", () => {
+        test.skip("GET - 200: valid combination of all three queries works as desired, and uppercase is ignored", () => {
             return request(app)
-                .get("/api/articles?sort_by=body&order=asc&topic=mitch")
+                .get("/api/articles?sort_by=BODY&order=ASC&topic=MITCH")
                 .expect(200)
                 .then(({ body: { articles } }) => {
                     expect(articles.length).toBe(11);

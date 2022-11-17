@@ -2,7 +2,11 @@ const db = require("../db/connection.js");
 
 const { parseDateFieldWithMap } = require("../utils/utils.js");
 
-exports.selectArticles = ({ topic, sort_by = "created_at" }) => {
+exports.selectArticles = ({
+    topic,
+    sort_by = "created_at",
+    order = "desc"
+}) => {
     const validSortQueries = [
         "title",
         "topic",
@@ -10,6 +14,8 @@ exports.selectArticles = ({ topic, sort_by = "created_at" }) => {
         "created_at",
         "article_id"
     ];
+
+    const validOrderQueries = ["asc", "desc"];
 
     let dbQuery = `
         SELECT
@@ -38,7 +44,7 @@ exports.selectArticles = ({ topic, sort_by = "created_at" }) => {
             articles.author,
             articles.created_at,
             articles.article_id
-        ORDER BY articles.${sort_by} DESC;
+        ORDER BY articles.${sort_by} ${order};
         `;
 
     return db.query(dbQuery, injectionValues).then((response) => {
