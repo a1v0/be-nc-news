@@ -2,11 +2,6 @@ const express = require("express");
 const app = express();
 
 const {
-    getArticles,
-    getArticleById,
-    patchArticleById,
-    getCommentsByArticleId,
-    postCommentByArticleId,
     getUsers,
     deleteCommentById,
     getEndpoints
@@ -16,23 +11,16 @@ const {
     lastResort500Error,
     psqlErrorHandler
 } = require("./errors/error-handler.js");
+const articlesRouter = require("./routes/articles.route.js");
+const topicsRouter = require("./routes/topics.route.js");
 
 app.use(express.json());
 
-const topicsRouter = require("./routes/topics.route.js");
-app.use("/api/topics", topicsRouter);
-
 app.get("/api", getEndpoints);
 
-app.get("/api/articles", getArticles);
+app.use("/api/topics", topicsRouter);
 
-app.route("/api/articles/:article_id")
-    .get(getArticleById)
-    .patch(patchArticleById);
-
-app.route("/api/articles/:article_id/comments")
-    .get(getCommentsByArticleId)
-    .post(postCommentByArticleId);
+app.use("/api/articles", articlesRouter);
 
 app.get("/api/users", getUsers);
 
