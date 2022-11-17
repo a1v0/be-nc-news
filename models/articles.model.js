@@ -176,3 +176,44 @@ exports.updateArticleById = (id, inc_votes, article) => {
             return response.rows[0];
         });
 };
+
+exports.insertArticle = ({ author, title, body, topic }) => {
+    return db
+        .query(
+            `
+            INSERT INTO articles (
+                author,
+                title,
+                body,
+                topic
+            ) VALUES(
+                $1,
+                $2,
+                $3,
+                $4
+            )
+            RETURNING
+                article_id;
+        `,
+            [author, title, body, topic]
+        )
+        .then((response) => {
+            return db.query(
+                `
+                    SELECT
+                        articles.*,
+                        CAST (COUNT(comments.article_id) AS INT)
+                            AS comment_count
+                    FROM articles
+                    LEFT OUTER JOIN comments
+                    ON comments.article_id = $1
+                    WHERE articles.article_id = $1
+                    GROUP BY articles.article_id;
+                `,
+                [response.rows[0].article_id]
+            );
+        })
+        .then((response) => {
+            return response.rows[0];
+        });
+};

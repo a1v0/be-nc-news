@@ -3,7 +3,8 @@ const {
     selectArticleById,
     updateArticleById,
     selectCommentsByArticleId,
-    insertCommentByArticleId
+    insertCommentByArticleId,
+    insertArticle
 } = require("../models/articles.model.js");
 const endpointsJSON = require("../endpoints.json");
 
@@ -80,4 +81,10 @@ exports.postCommentByArticleId = (req, res, next) => {
 
 exports.getEndpoints = (req, res) => {
     res.status(200).json({ endpoints: endpointsJSON });
+};
+
+exports.postArticle = (req, res, next) => {
+    insertArticle(req.body).then((article) => {
+        res.status(201).send({ article });
+    });
 };

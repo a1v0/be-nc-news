@@ -196,7 +196,7 @@ describe("/api/articles", () => {
         });
     });
     describe("POST requests", () => {
-        test.skip("POST - 201: returns created object with author, title, body, topic, article_id, votes, created_at and comment_count properties", () => {
+        test("POST - 201: returns created object with author, title, body, topic, article_id, votes, created_at and comment_count properties", () => {
             return request(app)
                 .post("/api/articles")
                 .send({
