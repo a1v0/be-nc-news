@@ -521,24 +521,46 @@ describe("/api/users/:username", () => {
 });
 
 describe("/api/comments/:comment_id", () => {
-    test("DELETE - 204: responds with no content when comment is successfully deleted", () => {
-        return request(app).delete("/api/comments/1").expect(204);
+    describe("PATCH requests", () => {
+        test.todo(
+            "PATCH - 200: returns updated comment when passed an object with a inc_votes property"
+        );
+        test.todo(
+            "PATCH - 200: returns as normal, ignoring superfluous properties"
+        );
+        test.todo(
+            "PATCH - 200: sets votes property to 0 if passed object makes it negative"
+        );
+        test.todo(
+            "PATCH - 200: rounds inc_votes down to nearest integer if given a float"
+        );
+        test.todo(
+            "PATCH - 400: returns error when passed obj doesn't have an inc_votes property"
+        );
+        test.todo("PATCH - 400: returns error when inc_votes === NaN");
+        test.todo("PATCH - 400: returns error when comment_id is invalid");
+        test.todo("PATCH - 404: returns error when comment_id not found");
     });
-    test("DELETE - 400: responds with error when comment_id is invalid", () => {
-        return request(app)
-            .delete("/api/comments/im-a-little-teapot")
-            .expect(400)
-            .then(({ body: { msg } }) => {
-                expect(msg).toBe("invalid comment id");
-            });
-    });
-    test("DELETE - 404: responds with error when comment doesn't exist", () => {
-        return request(app)
-            .delete("/api/comments/9999999")
-            .expect(404)
-            .then(({ body: { msg } }) => {
-                expect(msg).toBe("comment not found");
-            });
+    describe("DELETE requests", () => {
+        test("DELETE - 204: responds with no content when comment is successfully deleted", () => {
+            return request(app).delete("/api/comments/1").expect(204);
+        });
+        test("DELETE - 400: responds with error when comment_id is invalid", () => {
+            return request(app)
+                .delete("/api/comments/im-a-little-teapot")
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("invalid comment id");
+                });
+        });
+        test("DELETE - 404: responds with error when comment doesn't exist", () => {
+            return request(app)
+                .delete("/api/comments/9999999")
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("comment not found");
+                });
+        });
     });
 });
 
