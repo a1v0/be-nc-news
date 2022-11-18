@@ -14,13 +14,6 @@ exports.selectArticles = ({
     sort_by = sort_by.toLowerCase();
     order = order.toLowerCase();
 
-    if (isNaN(Number(limit)) || isNaN(Number(p))) {
-        return Promise.reject({ status: 400, msg: "invalid querystring" });
-    } else {
-        limit = Number(limit);
-        p = Number(p);
-    }
-
     const validSortQueries = [
         "title",
         "topic",
@@ -35,9 +28,14 @@ exports.selectArticles = ({
 
     if (
         !validSortQueries.includes(sort_by) ||
-        !validOrderQueries.includes(order)
+        !validOrderQueries.includes(order) ||
+        isNaN(Number(limit)) ||
+        isNaN(Number(p))
     ) {
         return Promise.reject({ status: 400, msg: "invalid querystring" });
+    } else {
+        limit = Number(limit);
+        p = Number(p);
     }
 
     return selectTopics()
