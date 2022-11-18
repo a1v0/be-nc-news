@@ -482,7 +482,6 @@ describe("/api/articles/:article_id/comments", () => {
                 .get("/api/articles/1/comments")
                 .expect(200)
                 .then(({ body: { comments } }) => {
-                    expect(comments.length).toBe(11);
                     comments.forEach((comment) => {
                         expect(comment).toEqual({
                             comment_id: expect.any(Number),
@@ -528,6 +527,73 @@ describe("/api/articles/:article_id/comments", () => {
                 .then(({ body: { msg } }) => {
                     expect(msg).toBe("article not found");
                 });
+        });
+        describe("GET requests with pagination", () => {
+            test("GET - 200: response has total_count property listing correct total amount of comments available", () => {
+                return request(app)
+                    .get("/api/articles/1/comments")
+                    .expect(200)
+                    .then(({ body: { total_count } }) => {
+                        expect(total_count).toBe(11);
+                    })
+                    .then(() => {
+                        return request(app)
+                            .get("/api/articles/1/comments?limit=10&p=2")
+                            .expect(200);
+                    })
+                    .then(({ body: { total_count } }) => {
+                        expect(total_count).toBe(11);
+                    });
+            });
+            test("GET - 200: returns correct amount of responses when limit is set (default is 10)", () => {
+                return request(app)
+                    .get("/api/articles/1/comments")
+                    .expect(200)
+                    .then(({ body: { comments } }) => {
+                        expect(comments.length).toBe(10);
+                    })
+                    .then(() => {
+                        return request(app)
+                            .get("/api/articles/1/comments?limit=3")
+                            .expect(200);
+                    })
+                    .then(({ body: { comments } }) => {
+                        expect(comments.length).toBe(3);
+                    });
+            });
+            test("GET - 200: shows correct 'page' when p given a value", () => {
+                return request(app)
+                    .get("/api/articles/1/comments?p=2&limit=2")
+                    .expect(200)
+                    .then(({ body: { comments } }) => {
+                        expect(comments.length).toBe(2);
+                        expect(comments[1].body).toBe("Fruit pastilles");
+                    });
+            });
+            test("GET - 200: shows only comments that exist when limit > amount of articles", () => {
+                return request(app)
+                    .get("/api/articles/1/comments?limit=10000")
+                    .expect(200)
+                    .then(({ body: { comments } }) => {
+                        expect(comments.length).toBe(11);
+                    });
+            });
+            test("GET - 400: error when limit is NaN", () => {
+                return request(app)
+                    .get("/api/articles/1/comments?limit=dfghjk")
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                        expect(msg).toBe("invalid querystring");
+                    });
+            });
+            test("GET - 400: error when p is NaN", () => {
+                return request(app)
+                    .get("/api/articles/1/comments?p=dfghjk")
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                        expect(msg).toBe("invalid querystring");
+                    });
+            });
         });
     });
     describe("POST requests", () => {

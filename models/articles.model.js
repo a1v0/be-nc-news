@@ -33,9 +33,6 @@ exports.selectArticles = ({
         isNaN(Number(p))
     ) {
         return Promise.reject({ status: 400, msg: "invalid querystring" });
-    } else {
-        limit = Number(limit);
-        p = Number(p);
     }
 
     return selectTopics()
@@ -76,18 +73,30 @@ exports.selectArticles = ({
                     articles.author,
                     articles.created_at,
                     articles.article_id
-                ORDER BY articles.${sort_by} ${order};
+                ORDER BY articles.${sort_by} ${order}
+                LIMIT ${limit} OFFSET ${(p - 1) * limit};
             `;
             return db.query(dbQuery, injectionValues);
         })
         .then((response) => {
-            const articles = parseDateFieldWithMap(response.rows);
-            const start = (p - 1) * limit;
-            const end = start + limit;
+            let dbQuery = `
+                SELECT count(*) OVER()
+                    AS total_count
+                FROM articles
+            `;
 
+            const injectionValues = [];
+            if (topic) {
+                injectionValues.push(topic);
+                dbQuery += `WHERE topic = $1;`;
+            }
+            return Promise.all([db.query(dbQuery, injectionValues), response]);
+        })
+        .then((totalAndArticles) => {
+            const articles = parseDateFieldWithMap(totalAndArticles[1].rows);
             return {
-                articles: articles.slice(start, end),
-                total_count: response.rows.length
+                articles,
+                total_count: totalAndArticles[0].rows.length
             };
         });
 };
@@ -125,18 +134,39 @@ exports.selectArticleById = (id) => {
         });
 };
 
-exports.selectCommentsByArticleId = (id) => {
+exports.selectCommentsByArticleId = (id, { limit = 10, p = 1 }) => {
+    if (isNaN(Number(limit)) || isNaN(Number(p))) {
+        return Promise.reject({ status: 400, msg: "invalid querystring" });
+    }
     return db
         .query(
             `
                 SELECT * FROM comments
                 WHERE article_id = $1
-                ORDER BY created_at DESC;
+                ORDER BY created_at DESC
+                LIMIT ${limit} OFFSET ${(p - 1) * limit};
             `,
             [id]
         )
         .then((response) => {
-            return parseDateFieldWithMap(response.rows);
+            const lengthQuery = db.query(
+                `
+                    SELECT COUNT(*) OVER()
+                        AS total_count
+                    FROM comments
+                    WHERE article_id = $1;
+                `,
+                [id]
+            );
+            return Promise.all([lengthQuery, response.rows]);
+        })
+        .then((response) => {
+            const total_count = !response[0].rows.length
+                ? 0
+                : Number(response[0].rows[0].total_count);
+            const comments = parseDateFieldWithMap(response[1]);
+
+            return { comments, total_count };
         });
 };
 
@@ -144,18 +174,18 @@ exports.insertCommentByArticleId = (id, { body, username }) => {
     return db
         .query(
             `
-            INSERT INTO comments (
-                article_id,
-                body,
-                author,
-                votes
-            ) VALUES (
-                $1,
-                $2,
-                $3,
-                0
-            ) RETURNING * ;
-        `,
+                INSERT INTO comments (
+                    article_id,
+                    body,
+                    author,
+                    votes
+                ) VALUES (
+                    $1,
+                    $2,
+                    $3,
+                    0
+                ) RETURNING * ;
+            `,
             [id, body, username]
         )
         .then((response) => {

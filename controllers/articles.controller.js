@@ -16,7 +16,7 @@ exports.getArticles = (req, res, next) => {
 };
 
 exports.getArticleById = (req, res, next) => {
-    return selectArticleById(req.params.article_id, next)
+    return selectArticleById(req.params.article_id)
         .then((article) => {
             res.status(200).send({ article });
         })
@@ -28,7 +28,7 @@ exports.getArticleById = (req, res, next) => {
 
 exports.patchArticleById = (req, res, next) => {
     const article_id = req.params.article_id;
-    return selectArticleById(article_id, next)
+    return selectArticleById(article_id)
         .then((article) => {
             return updateArticleById(article_id, req.body.inc_votes, article);
         })
@@ -43,12 +43,12 @@ exports.patchArticleById = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
     const article_id = req.params.article_id;
-    return selectArticleById(article_id, next)
+    return selectArticleById(article_id)
         .then(() => {
-            return selectCommentsByArticleId(article_id);
+            return selectCommentsByArticleId(article_id, req.query);
         })
         .then((comments) => {
-            res.status(200).send({ comments });
+            res.status(200).send(comments);
         })
         .catch((err) => {
             err.invalidProperty = "article id";
@@ -58,7 +58,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
 
 exports.postCommentByArticleId = (req, res, next) => {
     const article_id = req.params.article_id;
-    return selectArticleById(article_id, next)
+    return selectArticleById(article_id)
         .then(() => {
             return insertCommentByArticleId(article_id, req.body);
         })
