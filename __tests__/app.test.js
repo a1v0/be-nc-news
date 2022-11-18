@@ -586,7 +586,14 @@ describe("/api/articles/:article_id/comments", () => {
                         expect(msg).toBe("invalid querystring");
                     });
             });
-            test.skip("GET - 400: error when p is NaN", () => {});
+            test("GET - 400: error when p is NaN", () => {
+                return request(app)
+                    .get("/api/articles/1/comments?p=dfghjk")
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                        expect(msg).toBe("invalid querystring");
+                    });
+            });
         });
     });
     describe("POST requests", () => {
