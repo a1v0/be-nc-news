@@ -219,7 +219,7 @@ describe("/api/articles", () => {
                     });
                 });
         });
-        test.skip("POST - 201: ignores superfluous properties", () => {
+        test("POST - 201: ignores superfluous properties", () => {
             return request(app)
                 .post("/api/articles")
                 .send({
