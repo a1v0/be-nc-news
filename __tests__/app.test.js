@@ -37,21 +37,75 @@ describe("/api", () => {
 });
 
 describe("/api/topics", () => {
-    test("GET - 200: respond with array of topic objects, each having only 'slug' and 'description' properties", () => {
-        return request(app)
-            .get("/api/topics")
-            .expect(200)
-            .then(({ body: { topics } }) => {
-                expect(Array.isArray(topics)).toBe(true);
-                expect(typeof topics[0]).toBe("object");
-                expect(topics.length).toBeGreaterThan(0);
-                topics.forEach((topic) => {
-                    expect(topic).toEqual({
-                        slug: expect.any(String),
-                        description: expect.any(String)
+    describe("GET requests", () => {
+        test("GET - 200: respond with array of topic objects, each having only 'slug' and 'description' properties", () => {
+            return request(app)
+                .get("/api/topics")
+                .expect(200)
+                .then(({ body: { topics } }) => {
+                    expect(Array.isArray(topics)).toBe(true);
+                    expect(typeof topics[0]).toBe("object");
+                    expect(topics.length).toBeGreaterThan(0);
+                    topics.forEach((topic) => {
+                        expect(topic).toEqual({
+                            slug: expect.any(String),
+                            description: expect.any(String)
+                        });
                     });
                 });
-            });
+        });
+    });
+    describe("POST requests", () => {
+        test("POST - 201: returns newly added topic", () => {
+            return request(app)
+                .post("/api/topics")
+                .send({
+                    slug: "topic name here",
+                    description: "description here"
+                })
+                .expect(201)
+                .then(({ body: { topic } }) => {
+                    expect(topic).toMatchObject({
+                        slug: "topic name here",
+                        description: "description here"
+                    });
+                });
+        });
+        test("POST - 201: ignores superfluous properties", () => {
+            return request(app)
+                .post("/api/topics")
+                .send({
+                    slug: "topic name here",
+                    description: "description here",
+                    monsters: "Inc.",
+                    donald: "Duck"
+                })
+                .expect(201)
+                .then(({ body: { topic } }) => {
+                    expect(topic).toMatchObject({
+                        slug: "topic name here",
+                        description: "description here"
+                    });
+                });
+        });
+        test("POST - 400: error when slug or description is missing", () => {
+            return request(app)
+                .post("/api/topics")
+                .send({ slug: "hello" })
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("POST request body is incomplete");
+                })
+                .then(() => {
+                    return request(app)
+                        .post("/api/topics")
+                        .send({ slug: "hello" })
+                        .expect(400);
+                })
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("POST request body is incomplete");
+                });
+        });
     });
 });
 
