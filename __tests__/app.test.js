@@ -147,8 +147,22 @@ describe("/api/articles", () => {
                         expect(articles.length).toBe(2);
                     });
             });
-            test.todo("GET - 400: error when limit is NaN");
-            test.todo("GET - 400: error when p is NaN");
+            test("GET - 400: error when limit is NaN", () => {
+                return request(app)
+                    .get("/api/articles?limit=hello")
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                        expect(msg).toBe("invalid querystring");
+                    });
+            });
+            test("GET - 400: error when p is NaN", () => {
+                return request(app)
+                    .get("/api/articles?p=hello")
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                        expect(msg).toBe("invalid querystring");
+                    });
+            });
         });
         describe("GET requests with querystrings", () => {
             test("GET - 200: valid topic query returns results only from that topic", () => {

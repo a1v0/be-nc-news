@@ -14,6 +14,13 @@ exports.selectArticles = ({
     sort_by = sort_by.toLowerCase();
     order = order.toLowerCase();
 
+    if (isNaN(Number(limit)) || isNaN(Number(p))) {
+        return Promise.reject({ status: 400, msg: "invalid querystring" });
+    } else {
+        limit = Number(limit);
+        p = Number(p);
+    }
+
     const validSortQueries = [
         "title",
         "topic",
@@ -77,8 +84,8 @@ exports.selectArticles = ({
         })
         .then((response) => {
             const articles = parseDateFieldWithMap(response.rows);
-            const start = (Number(p) - 1) * Number(limit);
-            const end = start + Number(limit);
+            const start = (p - 1) * limit;
+            const end = start + limit;
 
             return {
                 articles: articles.slice(start, end),
