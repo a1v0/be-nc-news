@@ -6,7 +6,6 @@ const {
     insertCommentByArticleId,
     insertArticle
 } = require("../models/articles.model.js");
-const endpointsJSON = require("../endpoints.json");
 
 exports.getArticles = (req, res, next) => {
     return selectArticles(req.query)
@@ -77,10 +76,6 @@ exports.postCommentByArticleId = (req, res, next) => {
                 next(err);
             }
         });
-};
-
-exports.getEndpoints = (req, res) => {
-    res.status(200).json({ endpoints: endpointsJSON });
 };
 
 exports.postArticle = (req, res, next) => {
