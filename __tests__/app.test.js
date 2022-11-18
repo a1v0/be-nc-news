@@ -578,7 +578,14 @@ describe("/api/articles/:article_id/comments", () => {
                         expect(comments.length).toBe(11);
                     });
             });
-            test.skip("GET - 400: error when limit is NaN", () => {});
+            test("GET - 400: error when limit is NaN", () => {
+                return request(app)
+                    .get("/api/articles/1/comments?limit=dfghjk")
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                        expect(msg).toBe("invalid querystring");
+                    });
+            });
             test.skip("GET - 400: error when p is NaN", () => {});
         });
     });

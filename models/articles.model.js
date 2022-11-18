@@ -135,6 +135,9 @@ exports.selectArticleById = (id) => {
 };
 
 exports.selectCommentsByArticleId = (id, { limit = 10, p = 1 }) => {
+    if (isNaN(Number(limit))) {
+        return Promise.reject({ status: 400, msg: "invalid querystring" });
+    }
     return db
         .query(
             `
