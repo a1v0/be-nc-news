@@ -7,17 +7,23 @@ exports.selectTopics = () => {
 };
 
 exports.insertTopic = ({ slug, description }) => {
+    if (!slug || !description) {
+        return Promise.reject({
+            status: 400,
+            msg: "POST request body is incomplete"
+        });
+    }
     return db
         .query(
             `
-            INSERT INTO topics (
-                slug,
-                description
-            ) VALUES (
-                $1,
-                $2
-            ) RETURNING * ;
-        `,
+                INSERT INTO topics (
+                    slug,
+                    description
+                ) VALUES (
+                    $1,
+                    $2
+                ) RETURNING * ;
+            `,
             [slug, description]
         )
         .then((response) => {

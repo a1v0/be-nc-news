@@ -88,7 +88,24 @@ describe("/api/topics", () => {
                     });
                 });
         });
-        test.todo("POST - 400: error when slug or description is missing");
+        test("POST - 400: error when slug or description is missing", () => {
+            return request(app)
+                .post("/api/topics")
+                .send({ slug: "hello" })
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("POST request body is incomplete");
+                })
+                .then(() => {
+                    return request(app)
+                        .post("/api/topics")
+                        .send({ slug: "hello" })
+                        .expect(400);
+                })
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("POST request body is incomplete");
+                });
+        });
     });
 });
 

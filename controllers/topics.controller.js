@@ -7,7 +7,9 @@ exports.getTopics = (req, res) => {
 };
 
 exports.postTopic = (req, res, next) => {
-    insertTopic(req.body).then((topic) => {
-        res.status(201).send({ topic });
-    });
+    insertTopic(req.body)
+        .then((topic) => {
+            res.status(201).send({ topic });
+        })
+        .catch(next);
 };
