@@ -37,21 +37,28 @@ describe("/api", () => {
 });
 
 describe("/api/topics", () => {
-    test("GET - 200: respond with array of topic objects, each having only 'slug' and 'description' properties", () => {
-        return request(app)
-            .get("/api/topics")
-            .expect(200)
-            .then(({ body: { topics } }) => {
-                expect(Array.isArray(topics)).toBe(true);
-                expect(typeof topics[0]).toBe("object");
-                expect(topics.length).toBeGreaterThan(0);
-                topics.forEach((topic) => {
-                    expect(topic).toEqual({
-                        slug: expect.any(String),
-                        description: expect.any(String)
+    describe("GET requests", () => {
+        test("GET - 200: respond with array of topic objects, each having only 'slug' and 'description' properties", () => {
+            return request(app)
+                .get("/api/topics")
+                .expect(200)
+                .then(({ body: { topics } }) => {
+                    expect(Array.isArray(topics)).toBe(true);
+                    expect(typeof topics[0]).toBe("object");
+                    expect(topics.length).toBeGreaterThan(0);
+                    topics.forEach((topic) => {
+                        expect(topic).toEqual({
+                            slug: expect.any(String),
+                            description: expect.any(String)
+                        });
                     });
                 });
-            });
+        });
+    });
+    describe("POST requests", () => {
+        test.todo("POST - 201: returns newly added topic");
+        test.todo("POST - 201: ignores superfluous properties");
+        test.todo("POST - 400: error when slug or description is missing");
     });
 });
 
