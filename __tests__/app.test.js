@@ -110,6 +110,14 @@ describe("/api/articles", () => {
                     })
                     .then(({ body: { total_count } }) => {
                         expect(total_count).toBe(12);
+                    })
+                    .then(() => {
+                        return request(app)
+                            .get("/api/articles?limit=3&topic=mitch")
+                            .expect(200);
+                    })
+                    .then(({ body: { total_count } }) => {
+                        expect(total_count).toBe(11);
                     });
             });
             test("GET - 200: returns correct amount of responses when limit is set (default is 10)", () => {
