@@ -85,10 +85,4 @@ exports.postArticle = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-
-    // insertArticle(req.body)
-    //     .then((article) => {
-    //         res.status(201).send({ article });
-    //     })
-    //     .catch(next);
 };
