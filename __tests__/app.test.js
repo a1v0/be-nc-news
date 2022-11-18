@@ -234,7 +234,7 @@ describe("/api/articles", () => {
                     expect(article).not.toHaveProperty("alasPoorYorrick");
                 });
         });
-        test.skip("POST - 400: error when body is missing one of the necessary properties", () => {
+        test("POST - 400: error when body is missing one of the necessary properties", () => {
             return request(app)
                 .post("/api/articles")
                 .send({

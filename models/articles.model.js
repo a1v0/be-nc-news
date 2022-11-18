@@ -178,23 +178,29 @@ exports.updateArticleById = (id, inc_votes, article) => {
 };
 
 exports.insertArticle = ({ author, title, body, topic }) => {
+    if (!author || !title || !body || !topic) {
+        return Promise.reject({
+            status: 400,
+            msg: "POST request body is incomplete"
+        });
+    }
     return db
         .query(
             `
-            INSERT INTO articles (
-                author,
-                title,
-                body,
-                topic
-            ) VALUES(
-                $1,
-                $2,
-                $3,
-                $4
-            )
-            RETURNING
-                article_id;
-        `,
+                INSERT INTO articles (
+                    author,
+                    title,
+                    body,
+                    topic
+                ) VALUES(
+                    $1,
+                    $2,
+                    $3,
+                    $4
+                )
+                RETURNING
+                    article_id;
+            `,
             [author, title, body, topic]
         )
         .then((response) => {
