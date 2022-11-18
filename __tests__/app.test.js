@@ -107,6 +107,7 @@ describe("/api/articles", () => {
             test.todo(
                 "GET - 200: shows only articles that exist when limit > amount of articles"
             );
+            test.todo("GET - 200: works correctly when both queries are set");
             test.todo("GET - 400: error when limit is NaN");
             test.todo("GET - 400: error when p is NaN");
         });
