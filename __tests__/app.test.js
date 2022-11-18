@@ -530,7 +530,14 @@ describe("/api/articles/:article_id/comments", () => {
                 });
         });
         describe("GET requests with pagination", () => {
-            test.skip("GET - 200: response has total_count property listing correct total amount of comments available", () => {});
+            test("GET - 200: response has total_count property listing correct total amount of comments available", () => {
+                return request(app)
+                    .get("/api/articles/1/comments")
+                    .expect(200)
+                    .then(({ body: { total_count } }) => {
+                        expect(total_count).toBe(11);
+                    });
+            });
             test.skip("GET - 200: returns correct amount of responses when limit is set (default is 10)", () => {});
             test.skip("GET - 200: shows correct 'page' when p given a value", () => {});
             test.skip("GET - 200: shows only comments that exist when limit > amount of articles", () => {});

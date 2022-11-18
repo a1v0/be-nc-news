@@ -48,7 +48,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
             return selectCommentsByArticleId(article_id);
         })
         .then((comments) => {
-            res.status(200).send({ comments });
+            res.status(200).send({ comments, total_count: comments.length });
         })
         .catch((err) => {
             err.invalidProperty = "article id";
