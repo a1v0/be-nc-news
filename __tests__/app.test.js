@@ -97,9 +97,22 @@ describe("/api/articles", () => {
                 });
         });
         describe("GET requests with pagination", () => {
-            test.todo(
-                "GET - 200: response has total_count property listing correct total amount of articles available"
-            );
+            test.skip("GET - 200: response has total_count property listing correct total amount of articles available", () => {
+                return request(app)
+                    .get("/api/articles")
+                    .expect(200)
+                    .then(({ body: { total_count } }) => {
+                        expect(total_count).toBe(12);
+                    })
+                    .then(() => {
+                        return request(app)
+                            .get("/api/articles?limit=3")
+                            .expect(200);
+                    })
+                    .then(({ body: { total_count } }) => {
+                        expect(total_count).toBe(12);
+                    });
+            });
             test.todo(
                 "GET - 200: returns correct amount of responses when limit is set"
             );

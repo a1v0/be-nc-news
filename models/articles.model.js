@@ -74,7 +74,10 @@ exports.selectArticles = ({
             return db.query(dbQuery, injectionValues);
         })
         .then((response) => {
-            return parseDateFieldWithMap(response.rows);
+            return {
+                articles: parseDateFieldWithMap(response.rows),
+                total_count: response.rows.length
+            };
         });
 };
 

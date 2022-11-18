@@ -10,7 +10,7 @@ const {
 exports.getArticles = (req, res, next) => {
     return selectArticles(req.query)
         .then((articles) => {
-            res.status(200).send({ articles });
+            res.status(200).send(articles);
         })
         .catch(next);
 };
