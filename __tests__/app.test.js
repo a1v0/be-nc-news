@@ -245,7 +245,8 @@ describe("/api/articles", () => {
                     expect(msg).toBe("POST request body is incomplete");
                 });
         });
-        test.skip("POST - 404: error when username does not exist", () => {
+        test("POST - 400: error when username does not exist", () => {
+            // When a username does not exist, it throws an invalid input error, because username is a primary key. As such, it has to be a 400, not 404
             return request(app)
                 .post("/api/articles")
                 .send({
@@ -255,9 +256,9 @@ describe("/api/articles", () => {
                     topic: "mitch",
                     alasPoorYorrick: "I knew him well"
                 })
-                .expect(404)
+                .expect(400)
                 .then(({ body: { msg } }) => {
-                    expect(msg).toBe("username not found");
+                    expect(msg).toBe("invalid username");
                 });
         });
     });

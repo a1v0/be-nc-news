@@ -204,6 +204,7 @@ exports.insertArticle = ({ author, title, body, topic }) => {
             [author, title, body, topic]
         )
         .then((response) => {
+            console.log(response.rows[0]);
             return db.query(
                 `
                     SELECT
