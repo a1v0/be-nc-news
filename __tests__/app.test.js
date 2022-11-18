@@ -536,6 +536,14 @@ describe("/api/articles/:article_id/comments", () => {
                     .expect(200)
                     .then(({ body: { total_count } }) => {
                         expect(total_count).toBe(11);
+                    })
+                    .then(() => {
+                        return request(app)
+                            .get("/api/articles/1/comments?limit=10&p=2")
+                            .expect(200);
+                    })
+                    .then(({ body: { total_count } }) => {
+                        expect(total_count).toBe(11);
                     });
             });
             test.skip("GET - 200: returns correct amount of responses when limit is set (default is 10)", () => {});
