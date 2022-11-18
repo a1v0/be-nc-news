@@ -530,9 +530,9 @@ describe("/api/articles/:article_id", () => {
         });
     });
     describe("DELETE requests", () => {
-        test.todo(
-            "DELETE - 204: responds with no content when valid delete request completed"
-        );
+        test("DELETE - 204: responds with no content when valid delete request completed", () => {
+            return request(app).delete("/api/articles/1").expect(204);
+        });
         test.todo(
             "DELETE - 400: responds with error when article_id is invalid"
         );
