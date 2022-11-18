@@ -561,7 +561,15 @@ describe("/api/articles/:article_id/comments", () => {
                         expect(comments.length).toBe(3);
                     });
             });
-            test.skip("GET - 200: shows correct 'page' when p given a value", () => {});
+            test("GET - 200: shows correct 'page' when p given a value", () => {
+                return request(app)
+                    .get("/api/articles/1/comments?p=2&limit=2")
+                    .expect(200)
+                    .then(({ body: { comments } }) => {
+                        expect(comments.length).toBe(2);
+                        expect(comments[1].body).toBe("Fruit pastilles");
+                    });
+            });
             test.skip("GET - 200: shows only comments that exist when limit > amount of articles", () => {});
             test.skip("GET - 400: error when limit is NaN", () => {});
             test.skip("GET - 400: error when p is NaN", () => {});

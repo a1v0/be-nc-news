@@ -134,14 +134,14 @@ exports.selectArticleById = (id) => {
         });
 };
 
-exports.selectCommentsByArticleId = (id, { limit = 10 }) => {
+exports.selectCommentsByArticleId = (id, { limit = 10, p = 1 }) => {
     return db
         .query(
             `
                 SELECT * FROM comments
                 WHERE article_id = $1
                 ORDER BY created_at DESC
-                LIMIT ${limit};
+                LIMIT ${limit} OFFSET ${(p - 1) * limit};
             `,
             [id]
         )
@@ -163,8 +163,6 @@ exports.selectCommentsByArticleId = (id, { limit = 10 }) => {
                 : Number(response[0].rows[0].total_count);
             const comments = parseDateFieldWithMap(response[1]);
 
-            console.log({ comments, total_count });
-
             return { comments, total_count };
         });
 };
@@ -173,18 +171,18 @@ exports.insertCommentByArticleId = (id, { body, username }) => {
     return db
         .query(
             `
-            INSERT INTO comments (
-                article_id,
-                body,
-                author,
-                votes
-            ) VALUES (
-                $1,
-                $2,
-                $3,
-                0
-            ) RETURNING * ;
-        `,
+                INSERT INTO comments (
+                    article_id,
+                    body,
+                    author,
+                    votes
+                ) VALUES (
+                    $1,
+                    $2,
+                    $3,
+                    0
+                ) RETURNING * ;
+            `,
             [id, body, username]
         )
         .then((response) => {
