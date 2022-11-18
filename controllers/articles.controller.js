@@ -78,10 +78,17 @@ exports.postCommentByArticleId = (req, res, next) => {
         });
 };
 
-exports.postArticle = (req, res, next) => {
-    insertArticle(req.body)
-        .then((article) => {
-            res.status(201).send({ article });
-        })
-        .catch(next);
+exports.postArticle = async (req, res, next) => {
+    try {
+        const article = await insertArticle(req.body);
+        res.status(201).send({ article });
+    } catch (err) {
+        next(err);
+    }
+
+    // insertArticle(req.body)
+    //     .then((article) => {
+    //         res.status(201).send({ article });
+    //     })
+    //     .catch(next);
 };
