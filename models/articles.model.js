@@ -33,9 +33,6 @@ exports.selectArticles = ({
         isNaN(Number(p))
     ) {
         return Promise.reject({ status: 400, msg: "invalid querystring" });
-    } else {
-        limit = Number(limit);
-        p = Number(p);
     }
 
     return selectTopics()
@@ -76,18 +73,30 @@ exports.selectArticles = ({
                     articles.author,
                     articles.created_at,
                     articles.article_id
-                ORDER BY articles.${sort_by} ${order};
+                ORDER BY articles.${sort_by} ${order}
+                LIMIT ${limit} OFFSET ${(p - 1) * limit};
             `;
             return db.query(dbQuery, injectionValues);
         })
         .then((response) => {
-            const articles = parseDateFieldWithMap(response.rows);
-            const start = (p - 1) * limit;
-            const end = start + limit;
+            let dbQuery = `
+                SELECT count(*) OVER()
+                    AS total_count
+                FROM articles
+            `;
 
+            const injectionValues = [];
+            if (topic) {
+                injectionValues.push(topic);
+                dbQuery += `WHERE topic = $1;`;
+            }
+            return Promise.all([db.query(dbQuery, injectionValues), response]);
+        })
+        .then((totalAndArticles) => {
+            const articles = parseDateFieldWithMap(totalAndArticles[1].rows);
             return {
-                articles: articles.slice(start, end),
-                total_count: response.rows.length
+                articles,
+                total_count: totalAndArticles[0].rows.length
             };
         });
 };
