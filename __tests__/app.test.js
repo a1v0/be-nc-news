@@ -71,7 +71,23 @@ describe("/api/topics", () => {
                     });
                 });
         });
-        test.todo("POST - 201: ignores superfluous properties");
+        test("POST - 201: ignores superfluous properties", () => {
+            return request(app)
+                .post("/api/topics")
+                .send({
+                    slug: "topic name here",
+                    description: "description here",
+                    monsters: "Inc.",
+                    donald: "Duck"
+                })
+                .expect(201)
+                .then(({ body: { topic } }) => {
+                    expect(topic).toMatchObject({
+                        slug: "topic name here",
+                        description: "description here"
+                    });
+                });
+        });
         test.todo("POST - 400: error when slug or description is missing");
     });
 });
