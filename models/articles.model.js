@@ -6,7 +6,9 @@ const { selectTopics } = require("./topics.model.js");
 exports.selectArticles = ({
     topic,
     sort_by = "created_at",
-    order = "desc"
+    order = "desc",
+    limit = 10,
+    p = 1
 }) => {
     if (topic) topic = topic.toLowerCase();
     sort_by = sort_by.toLowerCase();
@@ -74,8 +76,9 @@ exports.selectArticles = ({
             return db.query(dbQuery, injectionValues);
         })
         .then((response) => {
+            const articles = parseDateFieldWithMap(response.rows);
             return {
-                articles: parseDateFieldWithMap(response.rows),
+                articles: articles.slice(p - 1, limit),
                 total_count: response.rows.length
             };
         });
