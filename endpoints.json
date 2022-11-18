@@ -11,7 +11,15 @@
     },
     "GET /api/articles": {
         "description": "serves an array of all articles",
-        "queries": ["topic", "sort_by", "order"],
+        "queries": [
+            "topic",
+            "sort_by",
+            { "order": "defaults to desc" },
+            {
+                "limit": "the amount of articles to be shown per page. Defaults to 10"
+            },
+            { "p": "the page number" }
+        ],
         "exampleResponse": {
             "articles": [
                 {

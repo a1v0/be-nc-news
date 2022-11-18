@@ -62,7 +62,6 @@ describe("/api/articles", () => {
                 .get("/api/articles")
                 .expect(200)
                 .then(({ body: { articles } }) => {
-                    expect(articles.length).toBe(12);
                     articles.forEach((article) => {
                         expect(article).toEqual({
                             author: expect.any(String),
@@ -96,13 +95,89 @@ describe("/api/articles", () => {
                     expect(articles[2].comment_count).toBe(0);
                 });
         });
+        describe("GET requests with pagination", () => {
+            test("GET - 200: response has total_count property listing correct total amount of articles available", () => {
+                return request(app)
+                    .get("/api/articles")
+                    .expect(200)
+                    .then(({ body: { total_count } }) => {
+                        expect(total_count).toBe(12);
+                    })
+                    .then(() => {
+                        return request(app)
+                            .get("/api/articles?limit=3")
+                            .expect(200);
+                    })
+                    .then(({ body: { total_count } }) => {
+                        expect(total_count).toBe(12);
+                    })
+                    .then(() => {
+                        return request(app)
+                            .get("/api/articles?limit=3&topic=mitch")
+                            .expect(200);
+                    })
+                    .then(({ body: { total_count } }) => {
+                        expect(total_count).toBe(11);
+                    });
+            });
+            test("GET - 200: returns correct amount of responses when limit is set (default is 10)", () => {
+                return request(app)
+                    .get("/api/articles")
+                    .expect(200)
+                    .then(({ body: { articles } }) => {
+                        expect(articles.length).toBe(10);
+                    })
+                    .then(() => {
+                        return request(app)
+                            .get("/api/articles?limit=3")
+                            .expect(200);
+                    })
+                    .then(({ body: { articles } }) => {
+                        expect(articles.length).toBe(3);
+                    });
+            });
+            test("GET - 200: shows correct 'page' when p given a value", () => {
+                return request(app)
+                    .get(
+                        "/api/articles?topic=mitch&limit=3&p=2&sort_by=article_id&order=asc"
+                    )
+                    .expect(200)
+                    .then(({ body: { articles } }) => {
+                        expect(articles.length).toBe(3);
+                        expect(articles[0].title).toBe("Student SUES Mitch!");
+                    });
+            });
+            test("GET - 200: shows only articles that exist when limit > amount of articles", () => {
+                return request(app)
+                    .get("/api/articles?p=2")
+                    .expect(200)
+                    .then(({ body: { articles } }) => {
+                        expect(articles.length).toBe(2);
+                    });
+            });
+            test("GET - 400: error when limit is NaN", () => {
+                return request(app)
+                    .get("/api/articles?limit=hello")
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                        expect(msg).toBe("invalid querystring");
+                    });
+            });
+            test("GET - 400: error when p is NaN", () => {
+                return request(app)
+                    .get("/api/articles?p=hello")
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                        expect(msg).toBe("invalid querystring");
+                    });
+            });
+        });
         describe("GET requests with querystrings", () => {
             test("GET - 200: valid topic query returns results only from that topic", () => {
                 return request(app)
                     .get("/api/articles?topic=mitch")
                     .expect(200)
                     .then(({ body: { articles } }) => {
-                        expect(articles.length).toBe(11);
                         articles.forEach((article) => {
                             expect(article.topic).toBe("mitch");
                         });
@@ -161,9 +236,11 @@ describe("/api/articles", () => {
                     .get("/api/articles?sort_by=AUTHOR&order=ASC&topic=MITCH")
                     .expect(200)
                     .then(({ body: { articles } }) => {
-                        expect(articles.length).toBe(11);
                         expect(articles).toBeSortedBy("author", {
                             descending: false
+                        });
+                        articles.forEach((article) => {
+                            expect(article.topic).toBe("mitch");
                         });
                     });
             });

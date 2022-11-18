@@ -6,7 +6,9 @@ const { selectTopics } = require("./topics.model.js");
 exports.selectArticles = ({
     topic,
     sort_by = "created_at",
-    order = "desc"
+    order = "desc",
+    limit = 10,
+    p = 1
 }) => {
     if (topic) topic = topic.toLowerCase();
     sort_by = sort_by.toLowerCase();
@@ -26,9 +28,14 @@ exports.selectArticles = ({
 
     if (
         !validSortQueries.includes(sort_by) ||
-        !validOrderQueries.includes(order)
+        !validOrderQueries.includes(order) ||
+        isNaN(Number(limit)) ||
+        isNaN(Number(p))
     ) {
         return Promise.reject({ status: 400, msg: "invalid querystring" });
+    } else {
+        limit = Number(limit);
+        p = Number(p);
     }
 
     return selectTopics()
@@ -74,7 +81,14 @@ exports.selectArticles = ({
             return db.query(dbQuery, injectionValues);
         })
         .then((response) => {
-            return parseDateFieldWithMap(response.rows);
+            const articles = parseDateFieldWithMap(response.rows);
+            const start = (p - 1) * limit;
+            const end = start + limit;
+
+            return {
+                articles: articles.slice(start, end),
+                total_count: response.rows.length
+            };
         });
 };
 
