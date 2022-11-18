@@ -128,11 +128,20 @@ describe("/api/articles", () => {
                         expect(articles.length).toBe(3);
                     });
             });
-            test.todo("GET - 200: shows correct 'page' when p given a value");
+            test("GET - 200: shows correct 'page' when p given a value", () => {
+                return request(app)
+                    .get(
+                        "/api/articles?topic=mitch&limit=3&p=2&sort_by=article_id&order=asc"
+                    )
+                    .expect(200)
+                    .then(({ body: { articles } }) => {
+                        expect(articles.length).toBe(3);
+                        expect(articles[0].title).toBe("Student SUES Mitch!");
+                    });
+            });
             test.todo(
                 "GET - 200: shows only articles that exist when limit > amount of articles"
             );
-            test.todo("GET - 200: works correctly when both queries are set");
             test.todo("GET - 400: error when limit is NaN");
             test.todo("GET - 400: error when p is NaN");
         });

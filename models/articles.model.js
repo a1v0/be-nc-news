@@ -77,8 +77,11 @@ exports.selectArticles = ({
         })
         .then((response) => {
             const articles = parseDateFieldWithMap(response.rows);
+            const start = (Number(p) - 1) * Number(limit);
+            const end = start + Number(limit);
+
             return {
-                articles: articles.slice(p - 1, limit),
+                articles: articles.slice(start, end),
                 total_count: response.rows.length
             };
         });
