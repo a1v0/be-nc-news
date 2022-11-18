@@ -62,7 +62,12 @@
     },
     "GET /api/articles/:article_id/comments": {
         "description": "serves an array of all comments associated with a particular article",
-        "queries": []
+        "queries": [
+            {
+                "limit": "the amount of articles to be shown per page. Defaults to 10"
+            },
+            { "p": "the page number" }
+        ]
     },
     "POST /api/articles/:article_id/comments": {
         "description": "posts a comment to a specific article, returning the new comment object",
