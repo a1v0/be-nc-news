@@ -139,9 +139,14 @@ describe("/api/articles", () => {
                         expect(articles[0].title).toBe("Student SUES Mitch!");
                     });
             });
-            test.todo(
-                "GET - 200: shows only articles that exist when limit > amount of articles"
-            );
+            test("GET - 200: shows only articles that exist when limit > amount of articles", () => {
+                return request(app)
+                    .get("/api/articles?p=2")
+                    .expect(200)
+                    .then(({ body: { articles } }) => {
+                        expect(articles.length).toBe(2);
+                    });
+            });
             test.todo("GET - 400: error when limit is NaN");
             test.todo("GET - 400: error when p is NaN");
         });
