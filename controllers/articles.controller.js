@@ -3,9 +3,9 @@ const {
     selectArticleById,
     updateArticleById,
     selectCommentsByArticleId,
-    insertCommentByArticleId
+    insertCommentByArticleId,
+    insertArticle
 } = require("../models/articles.model.js");
-const endpointsJSON = require("../endpoints.json");
 
 exports.getArticles = (req, res, next) => {
     return selectArticles(req.query)
@@ -78,6 +78,11 @@ exports.postCommentByArticleId = (req, res, next) => {
         });
 };
 
-exports.getEndpoints = (req, res) => {
-    res.status(200).json({ endpoints: endpointsJSON });
+exports.postArticle = async (req, res, next) => {
+    try {
+        const article = await insertArticle(req.body);
+        res.status(201).send({ article });
+    } catch (err) {
+        next(err);
+    }
 };

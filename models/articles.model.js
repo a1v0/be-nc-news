@@ -176,3 +176,45 @@ exports.updateArticleById = (id, inc_votes, article) => {
             return response.rows[0];
         });
 };
+
+exports.insertArticle = async ({ author, title, body, topic }) => {
+    if (!author || !title || !body || !topic) {
+        return Promise.reject({
+            status: 400,
+            msg: "POST request body is incomplete"
+        });
+    }
+    const articleIdQuery = await db.query(
+        `
+            INSERT INTO articles (
+                author,
+                title,
+                body,
+                topic
+            ) VALUES(
+                $1,
+                $2,
+                $3,
+                $4
+            )
+            RETURNING
+                article_id;
+        `,
+        [author, title, body, topic]
+    );
+    const postedArticle = await db.query(
+        `
+            SELECT
+                articles.*,
+                CAST (COUNT(comments.article_id) AS INT)
+                    AS comment_count
+            FROM articles
+            LEFT OUTER JOIN comments
+            ON comments.article_id = $1
+            WHERE articles.article_id = $1
+            GROUP BY articles.article_id;
+        `,
+        [articleIdQuery.rows[0].article_id]
+    );
+    return postedArticle.rows[0];
+};
