@@ -96,6 +96,20 @@ describe("/api/articles", () => {
                     expect(articles[2].comment_count).toBe(0);
                 });
         });
+        describe("GET requests with pagination", () => {
+            test.todo(
+                "GET - 200: response has total_count property listing correct total amount of articles available"
+            );
+            test.todo(
+                "GET - 200: returns correct amount of responses when limit is set"
+            );
+            test.todo("GET - 200: shows correct 'page' when p given a value");
+            test.todo(
+                "GET - 200: shows only articles that exist when limit > amount of articles"
+            );
+            test.todo("GET - 400: error when limit is NaN");
+            test.todo("GET - 400: error when p is NaN");
+        });
         describe("GET requests with querystrings", () => {
             test("GET - 200: valid topic query returns results only from that topic", () => {
                 return request(app)
