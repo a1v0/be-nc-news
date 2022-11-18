@@ -396,38 +396,40 @@ describe("/api/articles", () => {
 });
 
 describe("/api/articles/:article_id", () => {
-    test("GET - 200: returns a single article object with the following properties: author, title, article_id, body, topic, created_at, votes", () => {
-        return request(app)
-            .get("/api/articles/2")
-            .expect(200)
-            .then(({ body: { article } }) => {
-                expect(article).toEqual({
-                    title: "Sony Vaio; or, The Laptop",
-                    topic: "mitch",
-                    author: "icellusedkars",
-                    body: "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me.",
-                    created_at: "2020-10-16T05:03:00.000Z",
-                    votes: 0,
-                    article_id: 2,
-                    comment_count: 0
+    describe("GET requests", () => {
+        test("GET - 200: returns a single article object with the following properties: author, title, article_id, body, topic, created_at, votes", () => {
+            return request(app)
+                .get("/api/articles/2")
+                .expect(200)
+                .then(({ body: { article } }) => {
+                    expect(article).toEqual({
+                        title: "Sony Vaio; or, The Laptop",
+                        topic: "mitch",
+                        author: "icellusedkars",
+                        body: "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me.",
+                        created_at: "2020-10-16T05:03:00.000Z",
+                        votes: 0,
+                        article_id: 2,
+                        comment_count: 0
+                    });
                 });
-            });
-    });
-    test("GET - 404: returns error when no article is found", () => {
-        return request(app)
-            .get("/api/articles/9999999")
-            .expect(404)
-            .then(({ body: { msg } }) => {
-                expect(msg).toBe("article not found");
-            });
-    });
-    test("GET - 400: returns error when article id is invalid", () => {
-        return request(app)
-            .get("/api/articles/obi-wan-kenobi")
-            .expect(400)
-            .then(({ body: { msg } }) => {
-                expect(msg).toBe("invalid article id");
-            });
+        });
+        test("GET - 404: returns error when no article is found", () => {
+            return request(app)
+                .get("/api/articles/9999999")
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("article not found");
+                });
+        });
+        test("GET - 400: returns error when article id is invalid", () => {
+            return request(app)
+                .get("/api/articles/obi-wan-kenobi")
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("invalid article id");
+                });
+        });
     });
 
     describe("PATCH requests", () => {
@@ -521,6 +523,27 @@ describe("/api/articles/:article_id", () => {
             return request(app)
                 .patch("/api/articles/999999")
                 .send({ inc_votes: 25 })
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("article not found");
+                });
+        });
+    });
+    describe("DELETE requests", () => {
+        test("DELETE - 204: responds with no content when valid delete request completed", () => {
+            return request(app).delete("/api/articles/1").expect(204);
+        });
+        test("DELETE - 400: responds with error when article_id is invalid", () => {
+            return request(app)
+                .delete("/api/articles/daisyDaisyGiveMeYourAnswerDo")
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("invalid article id");
+                });
+        });
+        test("DELETE - 404: responds with error when article_id does not exist", () => {
+            return request(app)
+                .delete("/api/articles/999999")
                 .expect(404)
                 .then(({ body: { msg } }) => {
                     expect(msg).toBe("article not found");

@@ -60,6 +60,9 @@
         "description": "updates the votes property of a given article by specific amount and responds with updated article object. Accepts signed integers. Floats will be rounded down. Count will never go below 0",
         "exampleInput": { "inc_votes": -5 }
     },
+    "DELETE /api/articles/:article_id": {
+        "description": "deletes a specific article. Returns 204 with no response"
+    },
     "GET /api/articles/:article_id/comments": {
         "description": "serves an array of all comments associated with a particular article",
         "queries": [

@@ -262,3 +262,23 @@ exports.insertArticle = async ({ author, title, body, topic }) => {
     );
     return postedArticle.rows[0];
 };
+
+exports.deleteFromArticlesById = (id) => {
+    return db
+        .query(
+            `
+            DELETE FROM articles
+            WHERE article_id = $1
+            RETURNING * ;
+        `,
+            [id]
+        )
+        .then((response) => {
+            if (!response.rows.length) {
+                return Promise.reject({
+                    status: 404,
+                    msg: "article not found"
+                });
+            }
+        });
+};

@@ -4,7 +4,8 @@ const {
     updateArticleById,
     selectCommentsByArticleId,
     insertCommentByArticleId,
-    insertArticle
+    insertArticle,
+    deleteFromArticlesById
 } = require("../models/articles.model.js");
 
 exports.getArticles = (req, res, next) => {
@@ -85,4 +86,15 @@ exports.postArticle = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
+};
+
+exports.deleteArticleById = (req, res, next) => {
+    deleteFromArticlesById(req.params.article_id)
+        .then(() => {
+            res.sendStatus(204);
+        })
+        .catch((err) => {
+            err.invalidProperty = "article id";
+            next(err);
+        });
 };
