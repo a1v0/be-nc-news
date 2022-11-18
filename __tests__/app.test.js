@@ -62,7 +62,6 @@ describe("/api/articles", () => {
                 .get("/api/articles")
                 .expect(200)
                 .then(({ body: { articles } }) => {
-                    expect(articles.length).toBe(12);
                     articles.forEach((article) => {
                         expect(article).toEqual({
                             author: expect.any(String),
@@ -97,7 +96,7 @@ describe("/api/articles", () => {
                 });
         });
         describe("GET requests with pagination", () => {
-            test.skip("GET - 200: response has total_count property listing correct total amount of articles available", () => {
+            test("GET - 200: response has total_count property listing correct total amount of articles available", () => {
                 return request(app)
                     .get("/api/articles")
                     .expect(200)
@@ -113,9 +112,22 @@ describe("/api/articles", () => {
                         expect(total_count).toBe(12);
                     });
             });
-            test.todo(
-                "GET - 200: returns correct amount of responses when limit is set"
-            );
+            test("GET - 200: returns correct amount of responses when limit is set (default is 10)", () => {
+                return request(app)
+                    .get("/api/articles")
+                    .expect(200)
+                    .then(({ body: { articles } }) => {
+                        expect(articles.length).toBe(10);
+                    })
+                    .then(() => {
+                        return request(app)
+                            .get("/api/articles?limit=3")
+                            .expect(200);
+                    })
+                    .then(({ body: { articles } }) => {
+                        expect(articles.length).toBe(3);
+                    });
+            });
             test.todo("GET - 200: shows correct 'page' when p given a value");
             test.todo(
                 "GET - 200: shows only articles that exist when limit > amount of articles"
@@ -130,7 +142,6 @@ describe("/api/articles", () => {
                     .get("/api/articles?topic=mitch")
                     .expect(200)
                     .then(({ body: { articles } }) => {
-                        expect(articles.length).toBe(11);
                         articles.forEach((article) => {
                             expect(article.topic).toBe("mitch");
                         });
@@ -189,9 +200,11 @@ describe("/api/articles", () => {
                     .get("/api/articles?sort_by=AUTHOR&order=ASC&topic=MITCH")
                     .expect(200)
                     .then(({ body: { articles } }) => {
-                        expect(articles.length).toBe(11);
                         expect(articles).toBeSortedBy("author", {
                             descending: false
+                        });
+                        articles.forEach((article) => {
+                            expect(article.topic).toBe("mitch");
                         });
                     });
             });
