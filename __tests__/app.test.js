@@ -570,7 +570,14 @@ describe("/api/articles/:article_id/comments", () => {
                         expect(comments[1].body).toBe("Fruit pastilles");
                     });
             });
-            test.skip("GET - 200: shows only comments that exist when limit > amount of articles", () => {});
+            test("GET - 200: shows only comments that exist when limit > amount of articles", () => {
+                return request(app)
+                    .get("/api/articles/1/comments?limit=10000")
+                    .expect(200)
+                    .then(({ body: { comments } }) => {
+                        expect(comments.length).toBe(11);
+                    });
+            });
             test.skip("GET - 400: error when limit is NaN", () => {});
             test.skip("GET - 400: error when p is NaN", () => {});
         });
