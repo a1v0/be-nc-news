@@ -541,9 +541,14 @@ describe("/api/articles/:article_id", () => {
                     expect(msg).toBe("invalid article id");
                 });
         });
-        test.todo(
-            "DELETE - 404: responds with error when article_id does not exist"
-        );
+        test("DELETE - 404: responds with error when article_id does not exist", () => {
+            return request(app)
+                .delete("/api/articles/999999")
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("article not found");
+                });
+        });
     });
 });
 

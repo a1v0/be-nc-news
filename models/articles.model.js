@@ -264,11 +264,21 @@ exports.insertArticle = async ({ author, title, body, topic }) => {
 };
 
 exports.deleteFromArticlesById = (id) => {
-    return db.query(
-        `
+    return db
+        .query(
+            `
             DELETE FROM articles
-            WHERE article_id = $1;
+            WHERE article_id = $1
+            RETURNING * ;
         `,
-        [id]
-    );
+            [id]
+        )
+        .then((response) => {
+            if (!response.rows.length) {
+                return Promise.reject({
+                    status: 404,
+                    msg: "article not found"
+                });
+            }
+        });
 };
