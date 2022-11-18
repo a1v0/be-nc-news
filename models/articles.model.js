@@ -134,18 +134,38 @@ exports.selectArticleById = (id) => {
         });
 };
 
-exports.selectCommentsByArticleId = (id) => {
+exports.selectCommentsByArticleId = (id, { limit = 10 }) => {
     return db
         .query(
             `
                 SELECT * FROM comments
                 WHERE article_id = $1
-                ORDER BY created_at DESC;
+                ORDER BY created_at DESC
+                LIMIT ${limit};
             `,
             [id]
         )
         .then((response) => {
-            return parseDateFieldWithMap(response.rows);
+            const lengthQuery = db.query(
+                `
+                    SELECT COUNT(*) OVER()
+                        AS total_count
+                    FROM comments
+                    WHERE article_id = $1;
+                `,
+                [id]
+            );
+            return Promise.all([lengthQuery, response.rows]);
+        })
+        .then((response) => {
+            const total_count = !response[0].rows.length
+                ? 0
+                : Number(response[0].rows[0].total_count);
+            const comments = parseDateFieldWithMap(response[1]);
+
+            console.log({ comments, total_count });
+
+            return { comments, total_count };
         });
 };
 

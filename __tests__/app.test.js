@@ -482,7 +482,6 @@ describe("/api/articles/:article_id/comments", () => {
                 .get("/api/articles/1/comments")
                 .expect(200)
                 .then(({ body: { comments } }) => {
-                    expect(comments.length).toBe(11);
                     comments.forEach((comment) => {
                         expect(comment).toEqual({
                             comment_id: expect.any(Number),
@@ -546,7 +545,22 @@ describe("/api/articles/:article_id/comments", () => {
                         expect(total_count).toBe(11);
                     });
             });
-            test.skip("GET - 200: returns correct amount of responses when limit is set (default is 10)", () => {});
+            test("GET - 200: returns correct amount of responses when limit is set (default is 10)", () => {
+                return request(app)
+                    .get("/api/articles/1/comments")
+                    .expect(200)
+                    .then(({ body: { comments } }) => {
+                        expect(comments.length).toBe(10);
+                    })
+                    .then(() => {
+                        return request(app)
+                            .get("/api/articles/1/comments?limit=3")
+                            .expect(200);
+                    })
+                    .then(({ body: { comments } }) => {
+                        expect(comments.length).toBe(3);
+                    });
+            });
             test.skip("GET - 200: shows correct 'page' when p given a value", () => {});
             test.skip("GET - 200: shows only comments that exist when limit > amount of articles", () => {});
             test.skip("GET - 400: error when limit is NaN", () => {});
