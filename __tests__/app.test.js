@@ -533,9 +533,14 @@ describe("/api/articles/:article_id", () => {
         test("DELETE - 204: responds with no content when valid delete request completed", () => {
             return request(app).delete("/api/articles/1").expect(204);
         });
-        test.todo(
-            "DELETE - 400: responds with error when article_id is invalid"
-        );
+        test("DELETE - 400: responds with error when article_id is invalid", () => {
+            return request(app)
+                .delete("/api/articles/daisyDaisyGiveMeYourAnswerDo")
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                    expect(msg).toBe("invalid article id");
+                });
+        });
         test.todo(
             "DELETE - 404: responds with error when article_id does not exist"
         );

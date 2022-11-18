@@ -89,7 +89,12 @@ exports.postArticle = async (req, res, next) => {
 };
 
 exports.deleteArticleById = (req, res, next) => {
-    deleteFromArticlesById(req.params.article_id).then(() => {
-        res.sendStatus(204);
-    });
+    deleteFromArticlesById(req.params.article_id)
+        .then(() => {
+            res.sendStatus(204);
+        })
+        .catch((err) => {
+            err.invalidProperty = "article id";
+            next(err);
+        });
 };
