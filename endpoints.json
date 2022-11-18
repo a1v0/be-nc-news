@@ -10,7 +10,7 @@
         }
     },
     "GET /api/articles": {
-        "description": "serves an array of all topics",
+        "description": "serves an array of all articles",
         "queries": ["topic", "sort_by", "order"],
         "exampleResponse": {
             "articles": [
@@ -22,6 +22,15 @@
                     "created_at": 1527695953341
                 }
             ]
+        }
+    },
+    "POST /api/articles": {
+        "description": "inserts an article into the database",
+        "exampleInput": {
+            "title": "Living in the shadow of a great man",
+            "topic": "mitch",
+            "author": "validUsername",
+            "body": "I find this existence challenging"
         }
     },
     "GET /api/articles/:article_id": {
@@ -73,7 +82,20 @@
             ]
         }
     },
+    "GET /api/users/:username": {
+        "description": "returns a specific user",
+        "exampleResponse": {
+            "user": {
+                "username": "username",
+                "name": "Mr Name",
+                "avatar_url": "https://www.example.com"
+            }
+        }
+    },
     "DELETE /api/comments/:comment_id": {
         "description": "deletes a specific comment. Returns 204 with no response"
+    },
+    "PATCH /api/comments/:comment_id": {
+        "description": "updates the votes property of a given comment by specific amount and responds with updated comment object. Accepts signed integers. Floats will be rounded down. Count will never go below 0"
     }
 }
