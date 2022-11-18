@@ -529,6 +529,14 @@ describe("/api/articles/:article_id/comments", () => {
                     expect(msg).toBe("article not found");
                 });
         });
+        describe("GET requests with pagination", () => {
+            test.skip("GET - 200: response has total_count property listing correct total amount of comments available", () => {});
+            test.skip("GET - 200: returns correct amount of responses when limit is set (default is 10)", () => {});
+            test.skip("GET - 200: shows correct 'page' when p given a value", () => {});
+            test.skip("GET - 200: shows only comments that exist when limit > amount of articles", () => {});
+            test.skip("GET - 400: error when limit is NaN", () => {});
+            test.skip("GET - 400: error when p is NaN", () => {});
+        });
     });
     describe("POST requests", () => {
         test("POST - 201: responds with posted comment (including comment_id and article_id) when comment comprises username and body only", () => {
