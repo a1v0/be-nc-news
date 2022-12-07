@@ -298,6 +298,16 @@ describe("/api/articles", () => {
                         });
                     });
             });
+            test("GET - 200: sorts by comment_count when asked", () => {
+                return request(app)
+                    .get("/api/articles?sort_by=comment_count&order=asc")
+                    .expect(200)
+                    .then(({ body: { articles } }) => {
+                        expect(articles).toBeSortedBy("comment_count", {
+                            descending: false
+                        });
+                    });
+            });
             test("GET - 400: invalid order query returns error", () => {
                 return request(app)
                     .get("/api/articles?order=gobbledigook")

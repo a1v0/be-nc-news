@@ -73,7 +73,11 @@ exports.selectArticles = ({
                     articles.author,
                     articles.created_at,
                     articles.article_id
-                ORDER BY articles.${sort_by} ${order}
+                ORDER BY ${
+                    sort_by === "comment_count"
+                        ? sort_by
+                        : "articles." + sort_by
+                } ${order}
                 LIMIT ${limit} OFFSET ${(p - 1) * limit};
             `;
             return db.query(dbQuery, injectionValues);
